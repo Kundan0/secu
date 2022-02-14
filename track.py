@@ -8,7 +8,7 @@ os.environ["NUMEXPR_NUM_THREADS"] = "1"
 
 import sys
 sys.path.insert(0, './yolov5')
-
+sys.path.append(os.path.abspath("./yolov5"))
 import argparse
 import os
 import platform
@@ -37,17 +37,17 @@ if str(ROOT) not in sys.path:
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
 
-def detect(opt):
-    out, source, yolo_model, deep_sort_model, show_vid, save_vid, save_txt, imgsz, evaluate, half, project, name, exist_ok= \
-        opt.output, opt.source, opt.yolo_model, opt.deep_sort_model, opt.show_vid, opt.save_vid, \
-        opt.save_txt, opt.imgsz, opt.evaluate, opt.half, opt.project, opt.name, opt.exist_ok
-    webcam = source == '0' or source.startswith(
-        'rtsp') or source.startswith('http') or source.endswith('.txt')
+def detect(sourc,yolo_model="yolov5m.pt",deep_sort_model="osnet_x0_25",output="inference/output",imgsz=[640],conf_thres=0.3,iou_thres=0.5,fourcc="mp4v",device="",show_video=False,save_vid=False,save_txt=False,classes=[2,3,5,7],agnostic_nms=False,augment=False,evaluate=False,config_deepsort="deep_sort/configs/deep_sort.yaml",half=False,visualize=False,max_det=1000,dnn=False,project=ROOT / 'runs/track',name="exp",exist_ok=False):
+    my_output=[]
+    imgsz *= 2 if len(imgsz) == 1 else 1  # expand
 
-    device = select_device(opt.device)
+    out, source, yolo_model, deep_sort_model, show_vid, save_vid, save_txt, imgsz, evaluate, half, project, name, exist_ok=\
+        output,sourc,yolo_model,deep_sort_model,show_video,save_vid,save_txt,imgsz,evaluate,half,project,name,exist_ok
+    webcam = 0
+    device = select_device(device)
     # initialize deepsort
     cfg = get_config()
-    cfg.merge_from_file(opt.config_deepsort)
+    cfg.merge_from_file(config_deepsort)
     deepsort = DeepSort(deep_sort_model,
                         device,
                         max_dist=cfg.DEEPSORT.MAX_DIST,
@@ -73,7 +73,7 @@ def detect(opt):
 
     # Load model
     device = select_device(device)
-    model = DetectMultiBackend(yolo_model, device=device, dnn=opt.dnn)
+    model = DetectMultiBackend(yolo_model, device=device, dnn=dnn)
     stride, names, pt, jit, _ = model.stride, model.names, model.pt, model.jit, model.onnx
     imgsz = check_img_size(imgsz, s=stride)  # check image size
 
@@ -110,6 +110,7 @@ def detect(opt):
         model(torch.zeros(1, 3, *imgsz).to(device).type_as(next(model.model.parameters())))  # warmup
     dt, seen = [0.0, 0.0, 0.0, 0.0], 0
     for frame_idx, (path, img, im0s, vid_cap, s) in enumerate(dataset):
+        inter_output=[]
         t1 = time_sync()
         img = torch.from_numpy(img).to(device)
         img = img.half() if half else img.float()  # uint8 to fp16/32
@@ -120,13 +121,13 @@ def detect(opt):
         dt[0] += t2 - t1
 
         # Inference
-        visualize = increment_path(save_dir / Path(path).stem, mkdir=True) if opt.visualize else False
-        pred = model(img, augment=opt.augment, visualize=visualize)
+        visualize = increment_path(save_dir / Path(path).stem, mkdir=True) if visualize else False
+        pred = model(img, augment=augment, visualize=visualize)
         t3 = time_sync()
         dt[1] += t3 - t2
 
         # Apply NMS
-        pred = non_max_suppression(pred, opt.conf_thres, opt.iou_thres, opt.classes, opt.agnostic_nms, max_det=opt.max_det)
+        pred = non_max_suppression(pred, conf_thres, iou_thres, classes, agnostic_nms, max_det=max_det)
         dt[2] += time_sync() - t3
 
         # Process detections
@@ -163,7 +164,7 @@ def detect(opt):
                 outputs = deepsort.update(xywhs.cpu(), confs.cpu(), clss.cpu(), im0)
                 t5 = time_sync()
                 dt[3] += t5 - t4
-
+                
                 # draw boxes for visualization
                 if len(outputs) > 0:
                     for j, (output, conf) in enumerate(zip(outputs, confs)):
@@ -176,19 +177,16 @@ def detect(opt):
                         label = f'{id} {names[c]} {conf:.2f}'
                         annotator.box_label(bboxes, label, color=colors(c, True))
 
-                        if save_txt:
+                        
                             # to MOT format
-                            bbox_left = output[0]
-                            bbox_top = output[1]
-                            bbox_w = output[2] - output[0]
-                            bbox_h = output[3] - output[1]
-                            # Write MOT compliant results to file
-                            with open(txt_path, 'a') as f:
-                                f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
-                                                               bbox_top, bbox_w, bbox_h, -1, -1, -1, -1))
-
+                        bbox_left = output[0]
+                        bbox_top = output[1]
+                        # bbox_w = output[2] - output[0]
+                        # bbox_h = output[3] - output[1]
+                        # # Write MOT compliant results to file
+                        inter_output.append((frame_idx+1,id,(bbox_left,bbox_top,output[2],output[3]),c)) # frame,object id,(left,top,right,bottom),classId
                 LOGGER.info(f'{s}Done. YOLO:({t3 - t2:.3f}s), DeepSort:({t5 - t4:.3f}s)')
-
+        
             else:
                 deepsort.increment_ages()
                 LOGGER.info('No detections')
@@ -215,7 +213,7 @@ def detect(opt):
 
                     vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h))
                 vid_writer.write(im0)
-
+        my_output.append(inter_output)
     # Print results
     t = tuple(x / seen * 1E3 for x in dt)  # speeds per image
     LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS, %.1fms deep sort update \
@@ -225,7 +223,7 @@ def detect(opt):
         if platform == 'darwin':  # MacOS
             os.system('open ' + save_path)
 
-
+    return my_output
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--yolo_model', nargs='+', type=str, default='yolov5m.pt', help='model.pt path(s)')
@@ -254,7 +252,7 @@ if __name__ == '__main__':
     parser.add_argument('--name', default='exp', help='save results to project/name')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
     opt = parser.parse_args()
-    opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
+    imgsz *= 2 if len(imgsz) == 1 else 1  # expand
 
     with torch.no_grad():
         detect(opt)

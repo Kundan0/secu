@@ -5,7 +5,7 @@ import json
 import os
 import sys
 sys.path.append(os.path.abspath('./YoloTracker'))
-from YoloTracker.track import detect
+from track import detect
 class myDataset(Dataset):
     def __init__(self,annotation_dir,data_dir,json_dir):
         self.annotation_dir=annotation_dir

@@ -22,7 +22,7 @@ PATHS=os.path.join(PATH,"drive","MyDrive","State2")
 
 device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')    
 print(device)    
-data_dir=os.path.join(PATH,"")
+data_dir=os.path.join(PATH,"clips")
 an_dir=os.path.join(PATHJ,"Annotations")
 json_dir=os.path.join(PATHJ,"JSON.json")
 

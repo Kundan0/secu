@@ -34,7 +34,7 @@ class myDataset(Dataset):
 
         center=(left+right)/2,(top+bottom)/2
 
-        track_result=detect(os.path.join(self.data_dir,folder))
+        track_result=detect(os.path.join(self.data_dir,folder,"imgs"))
         track_result.pop(0)
         track_result.pop(0)
         id=None

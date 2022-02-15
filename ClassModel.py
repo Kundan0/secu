@@ -10,21 +10,28 @@ class myModel(nn.Module):
         self.loss=loss
         self.n1=nn.Sequential(
             
-        nn.Linear(40*4,256),
+        nn.Linear(38*4,256),
         nn.Linear(256,256),
         nn.Linear(256,128),
         nn.Linear(128,32),
         nn.Linear(32,4)
         )
-        self.n2=nn.Linear(5,4)
+        self.n2=nn.Sequential(
+            nn.Linear(5,10),
+            nn.Linear(10,4)
+        )
+        
         
         
 
     def forward(self,track):
+        print("forward first track size ",track.shape)
         track=torch.flatten(track,start_dim=1)
-        
+        print("after flattening",track.shape)
         result=self.n1(track)
-        result=self.n2(torch.cat(result,self.fps))
+        print("result from n1 ",result.shape)
+        result=self.n2(torch.cat((result.permute(1,0),self.fps.repeat(1,4))).permute(1,0))
+        print("final result shape ",result.shape)
         return result
         
 

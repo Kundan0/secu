@@ -102,6 +102,6 @@ class myDataset(Dataset):
             return
 
 
-    def Calcloss(center1,center2):
+    def Calcloss(self,center1,center2):
         return (center1[0]-center2[0])**2+(center1[1]-center2[1])**2
     

@@ -29,7 +29,7 @@ class myModel(nn.Module):
         print("forward first track size ",track.shape)
         track=torch.flatten(track,start_dim=1)
         print("after flattening",track.shape)
-        result=self.n1(track)
+        result=self.n1(track.to(torch.float32))
         print("result from n1 ",result.shape)
         result=self.n2(torch.cat((result.permute(1,0),self.fps.repeat(1,self.batch_size))).permute(1,0))
         print("final result shape ",result.shape)

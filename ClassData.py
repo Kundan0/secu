@@ -13,7 +13,7 @@ class myDataset(Dataset):
         self.json_dir=json_dir
         self.json_data=json.load(open(self.json_dir))
         #self.yolo_model=torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-        self.limit=10
+        self.limit=500
     
     def __getitem__(self,index):
         json_data=self.json_data[index]

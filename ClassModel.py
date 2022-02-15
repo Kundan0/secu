@@ -8,6 +8,7 @@ class myModel(nn.Module):
         self.checkpoint_path=checkpoint_pth
         self.fps=torch.tensor(fps)
         self.loss=loss
+        self.batch_size=1
         self.n1=nn.Sequential(
             
         nn.Linear(38*4,256),
@@ -30,7 +31,7 @@ class myModel(nn.Module):
         print("after flattening",track.shape)
         result=self.n1(track)
         print("result from n1 ",result.shape)
-        result=self.n2(torch.cat((result.permute(1,0),self.fps.repeat(1,4))).permute(1,0))
+        result=self.n2(torch.cat((result.permute(1,0),self.fps.repeat(1,self.batch_size))).permute(1,0))
         print("final result shape ",result.shape)
         return result
         

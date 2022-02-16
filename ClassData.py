@@ -123,7 +123,7 @@ class myDataset(Dataset):
                     last_track_center=((l+r)/2,(t+b)/2)
                     id=id_
                 else:
-                    myTracks.append([myTracks[-1]])
+                    myTracks.append(myTracks[-1])
                     id=id_
                
         myTracks=torch.tensor(myTracks)

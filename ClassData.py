@@ -37,7 +37,7 @@ class myDataset(Dataset):
         bbox=(left,top,right,bottom)
 
         center=(left+right)/2,(top+bottom)/2
-        print("center of bbox",center)
+        #print("center of bbox",center)
 
         track_result=detect(os.path.join(self.data_dir,folder,"imgs"),self.yolo_model,self.deep_sort)
         track_result.pop(0)
@@ -55,7 +55,7 @@ class myDataset(Dataset):
         returned_match=self.match(center,third_frame_track_centers,True)
         
         id=third_frame[returned_match][1] # returning the id of best match vehicle index 1 stores id and match returns the index of vehicle
-        print('original id ',id)
+        #print('original id ',id)
         myTracks=[]
         
         for idx,frame in enumerate(track_result):# 
@@ -66,23 +66,23 @@ class myDataset(Dataset):
                 updated_tracks.append(((left_+right_)/2,(top_+bottom_)/2))
                 
                 if values[1]==id:
-                    print("tracks ",values[2])
+                    #print("tracks ",values[2])
                     myTracks.append(values[2])
                     last_track_center=updated_tracks[-1]
                     found=True
                     
             if not found:
-                print("not found for folder ",folder)
-                print("frame ",frame)
+                #print("not found for folder ",folder)
+                #print("frame ",frame)
                 id_=id
                 returned_match=self.match(last_track_center,updated_tracks)
                 if(returned_match is not None):
                     id=frame[returned_match][1]
-                    print("id changed to ",id)
+                    #print("id changed to ",id)
                     for values in frame:
                         
                         if values[1]==id:
-                            print("new tracks ",values[2])
+                            #print("new tracks ",values[2])
                             myTracks.append(values[2])
                             last_track_center=((left_+right_)/2,(top_+bottom_)/2)
                             
@@ -96,30 +96,30 @@ class myDataset(Dataset):
                     top_values=np.array([val[1] for val in myTracks])
                     right_values=np.array([val[2] for val in myTracks])
                     bottom_values=np.array([val[3] for val in myTracks])
-                    print("x",X_values)
-                    print("l",left_values)
-                    print('t',top_values)
-                    print('b',bottom_values)
-                    print('r',right_values)
+                    # print("x",X_values)
+                    # print("l",left_values)
+                    # print('t',top_values)
+                    # print('b',bottom_values)
+                    # print('r',right_values)
                     lr=LinearRegression()
                     x0=np.array([len(myTracks)+1])
-                    print(x0)
+                    #print(x0)
                     model=lr.fit(X_values,left_values)
                     l=model.predict((x0).reshape(-1,1)).item()
-                    print("prdicted left is ",l)
+                    #print("prdicted left is ",l)
                     model=lr.fit(X_values,right_values)
                     r=model.predict((x0).reshape(-1,1)).item()
-                    print("prdicted right is ",r)
+                    #print("prdicted right is ",r)
                     model=lr.fit(X_values,top_values)
                     t=model.predict((x0).reshape(-1,1)).item()
-                    print("prdicted top is ",t)
+                    #print("prdicted top is ",t)
                     model=lr.fit(X_values,bottom_values)
                     b=model.predict((x0).reshape(-1,1)).item()
-                    print("prdicted bottom is ",b)
+                    #print("prdicted bottom is ",b)
 
                     track_=(l,t,r,b)
                     myTracks.append(track_)
-                    print("linearly regretted track ",track_)
+                    # print("linearly regretted track ",track_)
                     last_track_center=((l+r)/2,(t+b)/2)
                     id=id_
                 else:
@@ -139,10 +139,10 @@ class myDataset(Dataset):
         loss=[self.Calcloss(bbox_center,track) for track in tracks]
         
         mini=min(loss)
-        print("distances ",loss)
-        print("the minimum distace got is ",mini)
+        # print("distances ",loss)
+        # print("the minimum distace got is ",mini)
         if (mini>self.limit) and not third:
-            print("Limit crossed")
+            #print("Limit crossed")
 
             return
         return loss.index(mini)

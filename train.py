@@ -25,6 +25,7 @@ config_deepsort="deep_sort/configs/deep_sort.yaml"
 deep_sort_model="osnet_x0_25"
 cfg = get_config()
 cfg.merge_from_file(config_deepsort)
+print("deep sort is printing this")
 deepsort = DeepSort(deep_sort_model,
                     device,
                     max_dist=cfg.DEEPSORT.MAX_DIST,
@@ -33,6 +34,7 @@ deepsort = DeepSort(deep_sort_model,
                     )
 
 # Load model
+print("yolo is printing this")
 yolo_model="yolov5m.pt"
 dnn=False
 yolo_model = DetectMultiBackend(yolo_model, device=device, dnn=dnn)

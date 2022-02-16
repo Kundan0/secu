@@ -96,10 +96,7 @@ class myDataset(Dataset):
         loss=[self.Calcloss(bbox_center,track) for track in tracks]
         print("losses ",loss)
         mini=min(loss)
-        if mini<self.limit:
-            return loss.index(mini)
-        else:
-            return
+        return loss.index(mini)
 
 
     def Calcloss(self,center1,center2):

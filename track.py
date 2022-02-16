@@ -185,7 +185,7 @@ def detect(sourc,yolo_model="yolov5m.pt",deep_sort_model="osnet_x0_25",output="i
                         # bbox_h = output[3] - output[1]
                         # # Write MOT compliant results to file
                         inter_output.append((frame_idx+1,id,(bbox_left,bbox_top,output[2],output[3]),c)) # frame,object id,(left,top,right,bottom),classId
-                LOGGER.info(f'{s}Done. YOLO:({t3 - t2:.3f}s), DeepSort:({t5 - t4:.3f}s)')
+                #LOGGER.info(f'{s}Done. YOLO:({t3 - t2:.3f}s), DeepSort:({t5 - t4:.3f}s)')
         
             else:
                 deepsort.increment_ages()

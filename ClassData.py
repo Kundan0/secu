@@ -7,13 +7,15 @@ import sys
 sys.path.append(os.path.abspath('./YoloTracker'))
 from track import detect
 class myDataset(Dataset):
-    def __init__(self,annotation_dir,data_dir,json_dir):
+    def __init__(self,yolo_model,deep_sort,annotation_dir,data_dir,json_dir):
         self.annotation_dir=annotation_dir
         self.data_dir=data_dir
         self.json_dir=json_dir
         self.json_data=json.load(open(self.json_dir))
         #self.yolo_model=torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
         self.limit=500
+        self.yolo_model=yolo_model
+        self.deep_sort=deep_sort
     
     def __getitem__(self,index):
         json_data=self.json_data[index]
@@ -34,7 +36,7 @@ class myDataset(Dataset):
 
         center=(left+right)/2,(top+bottom)/2
 
-        track_result=detect(os.path.join(self.data_dir,folder,"imgs"))
+        track_result=detect(os.path.join(self.data_dir,folder,"imgs"),self.yolo_model,self.deep_sort)
         track_result.pop(0)
         track_result.pop(0)
         id=None

@@ -8,6 +8,36 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 import json
+from deep_sort.utils.parser import get_config
+from deep_sort.deep_sort import DeepSort
+from yolov5.models.common import DetectMultiBackend
+
+
+#device 
+device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')    
+print(device)    
+
+
+
+
+#Deepsort
+config_deepsort="deep_sort/configs/deep_sort.yaml"
+deep_sort_model="osnet_x0_25"
+cfg = get_config()
+cfg.merge_from_file(config_deepsort)
+deepsort = DeepSort(deep_sort_model,
+                    device,
+                    max_dist=cfg.DEEPSORT.MAX_DIST,
+                    max_iou_distance=cfg.DEEPSORT.MAX_IOU_DISTANCE,
+                    max_age=cfg.DEEPSORT.MAX_AGE, n_init=cfg.DEEPSORT.N_INIT, nn_budget=cfg.DEEPSORT.NN_BUDGET,
+                    )
+
+# Load model
+yolo_model="yolov5m.pt"
+dnn=False
+yolo_model = DetectMultiBackend(yolo_model, device=device, dnn=dnn)
+
+
 
 #colab
 PATH=os.path.join("/content")
@@ -20,14 +50,12 @@ PATHS=os.path.join(PATH,"drive","MyDrive","State2")
 #PATH=os.curdir
 
 
-device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')    
-print(device)    
 data_dir=os.path.join(PATH,"clips")
 an_dir=os.path.join(PATHJ,"Annotations")
 json_dir=os.path.join(PATHJ,"JSON.json")
 
 
-dataset=myDataset(an_dir,data_dir,json_dir)
+dataset=myDataset(yolo_model,deepsort,an_dir,data_dir,json_dir)
 dataset_size=len(dataset)
 print("length of dataset ",dataset_size)
 train_size=int(dataset_size*0.8)

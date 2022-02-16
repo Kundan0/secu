@@ -21,7 +21,6 @@ import torch.backends.cudnn as cudnn
 
 from yolov5.models.experimental import attempt_load
 from yolov5.utils.downloads import attempt_download
-from yolov5.models.common import DetectMultiBackend
 from yolov5.utils.datasets import LoadImages, LoadStreams
 from yolov5.utils.general import (LOGGER, check_img_size, non_max_suppression, scale_coords, 
                                   check_imshow, xyxy2xywh, increment_path)
@@ -37,23 +36,23 @@ if str(ROOT) not in sys.path:
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
 
-def detect(sourc,yolo_model="yolov5m.pt",deep_sort_model="osnet_x0_25",output="inference/output",imgsz=[640],conf_thres=0.3,iou_thres=0.5,fourcc="mp4v",device="",show_video=False,save_vid=False,save_txt=False,classes=[2,3,5,7],agnostic_nms=False,augment=False,evaluate=False,config_deepsort="deep_sort/configs/deep_sort.yaml",half=False,visualize=False,max_det=1000,dnn=False,project=ROOT / 'runs/track',name="exp",exist_ok=False):
+def detect(sourc,yolo_model,deepsort,output="inference/output",imgsz=[640],conf_thres=0.3,iou_thres=0.5,fourcc="mp4v",device="",show_video=False,save_vid=False,save_txt=False,classes=[2,3,5,7],agnostic_nms=False,augment=False,evaluate=False,half=False,visualize=False,max_det=1000,project=ROOT / 'runs/track',name="exp",exist_ok=False):
     my_output=[]
     imgsz *= 2 if len(imgsz) == 1 else 1  # expand
 
-    out, source, yolo_model, deep_sort_model, show_vid, save_vid, save_txt, imgsz, evaluate, half, project, name, exist_ok=\
-        output,sourc,yolo_model,deep_sort_model,show_video,save_vid,save_txt,imgsz,evaluate,half,project,name,exist_ok
+    out, source,model,deepsort,show_vid, save_vid, save_txt, imgsz, evaluate, half, project, name, exist_ok=\
+        output,sourc,yolo_model,deepsort,show_video,save_vid,save_txt,imgsz,evaluate,half,project,name,exist_ok
     webcam = 0
     device = select_device(device)
     # initialize deepsort
-    cfg = get_config()
-    cfg.merge_from_file(config_deepsort)
-    deepsort = DeepSort(deep_sort_model,
-                        device,
-                        max_dist=cfg.DEEPSORT.MAX_DIST,
-                        max_iou_distance=cfg.DEEPSORT.MAX_IOU_DISTANCE,
-                        max_age=cfg.DEEPSORT.MAX_AGE, n_init=cfg.DEEPSORT.N_INIT, nn_budget=cfg.DEEPSORT.NN_BUDGET,
-                        )
+    # cfg = get_config()
+    # cfg.merge_from_file(config_deepsort)
+    # deepsort = DeepSort(deep_sort_model,
+    #                     device,
+    #                     max_dist=cfg.DEEPSORT.MAX_DIST,
+    #                     max_iou_distance=cfg.DEEPSORT.MAX_IOU_DISTANCE,
+    #                     max_age=cfg.DEEPSORT.MAX_AGE, n_init=cfg.DEEPSORT.N_INIT, nn_budget=cfg.DEEPSORT.NN_BUDGET,
+    #                     )
 
     # Initialize
     
@@ -71,11 +70,9 @@ def detect(sourc,yolo_model="yolov5m.pt",deep_sort_model="osnet_x0_25",output="i
     save_dir = increment_path(Path(project) / name, exist_ok=exist_ok)  # increment run
     save_dir.mkdir(parents=True, exist_ok=True)  # make dir
 
-    # Load model
-    device = select_device(device)
-    model = DetectMultiBackend(yolo_model, device=device, dnn=dnn)
     stride, names, pt, jit, _ = model.stride, model.names, model.pt, model.jit, model.onnx
     imgsz = check_img_size(imgsz, s=stride)  # check image size
+
 
     # Half
     half &= pt and device.type != 'cpu'  # half precision only supported by PyTorch on CUDA

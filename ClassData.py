@@ -74,8 +74,9 @@ class myDataset(Dataset):
                 print("not found for folder ",folder)
                 print("frame ",frame)
                 id_=id
-                try:
-                    id=frame[self.match(last_track_center,updated_tracks)][1]
+                returned_match=self.match(last_track_center,updated_tracks)
+                if(returned_match is not None):
+                    id=frame[returned_match][1]
                     print("id changed to ",id)
                     for values in frame:
                         
@@ -86,7 +87,7 @@ class myDataset(Dataset):
                             
                         
                             
-                except:
+                else:
                     X_values=np.arange(1,len(myTracks)+1).reshape(-1,1)
                     left_values=np.array([val[0] for val in myTracks])
                     top_values=np.array([val[1] for val in myTracks])

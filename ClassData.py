@@ -102,7 +102,7 @@ class myDataset(Dataset):
         
         mini=min(loss)
         print("the minimum distace got is ",mini)
-        if (loss>self.limit):
+        if (mini>self.limit):
             print("Limit crossed")
         return loss.index(mini)
 

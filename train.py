@@ -44,7 +44,7 @@ try:
 except Exception as e:
     print(e)
 chkpt_file_pth=os.path.join(PATHS,"model")
-model=myModel(chkpt_file_pth).to(device)
+model=myModel(chkpt_file_pth,device).to(device)
 losses=[]
 try:
     with open(os.path.join(PATHS,"losses.json"),'rb') as f:

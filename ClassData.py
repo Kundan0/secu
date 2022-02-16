@@ -35,6 +35,7 @@ class myDataset(Dataset):
         bbox=(left,top,right,bottom)
 
         center=(left+right)/2,(top+bottom)/2
+        print("center of bbox",center)
 
         track_result=detect(os.path.join(self.data_dir,folder,"imgs"),self.yolo_model,self.deep_sort)
         track_result.pop(0)
@@ -47,18 +48,20 @@ class myDataset(Dataset):
             left,top,right,bottom=values[2]
             third_frame_track_centers.append(((right+left)/2,(bottom+top)/2))
         
+        print("tracked centers on third frame",third_frame_track_centers)
 
         
         id=third_frame[self.match(center,third_frame_track_centers)][1] # returning the id of best match vehicle index 1 stores id and match returns the index of vehicle
+        print('original id ',id)
         myTracks=[]
         
-        for frame in track_result:# 
+        for idx,frame in enumerate(track_result):# 
             found=False #result=[(16,1,(),2),(16,2,(),2)]
             updated_tracks=[]
             for values in frame:
                 left_,top_,right_,bottom_=values[2]
                 updated_tracks.append(((left_+right_)/2,(top_+bottom_)/2))
-                  
+                print("frame ",idx," id ",values[1])
                 if values[1]==id:
                     
                     myTracks.append(values[2])
@@ -66,10 +69,10 @@ class myDataset(Dataset):
                     found=True
                     
             if not found:
-                print("not found")
+                print("not found for folder ",folder)
                 try:
                     id=frame[self.match(last_track_center,updated_tracks)][1]
-                    
+                    print("id changed to ",id)
                     for values in frame:
                         
                         if values[1]==id:
@@ -87,7 +90,7 @@ class myDataset(Dataset):
                
         myTracks=torch.tensor(myTracks)
         print(myTracks)
-        print(myTracks.size())
+        
         return (myTracks,label)
 
     def __len__(self):
@@ -98,6 +101,7 @@ class myDataset(Dataset):
         loss=[self.Calcloss(bbox_center,track) for track in tracks]
         
         mini=min(loss)
+        print("the minimum distace got is ",mini)
         return loss.index(mini)
 
 

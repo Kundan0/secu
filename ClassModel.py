@@ -40,9 +40,9 @@ class myModel(nn.Module):
 
 
     def training_step(self,batch):
-        track,_=batch
+        track,label=batch
         result=self(track)
-        loss=self.loss(result,track)
+        loss=self.loss(result.to(torch.float32),label.to(torch.float32))
         
         return loss
     
@@ -50,7 +50,7 @@ class myModel(nn.Module):
         
         track,label=batch
         result=self(track)
-        loss=self.loss(result,label)
+        loss=self.loss(result.to(torch.float32),label.to(torch.float32))
         
         print("val loss for this batch ",loss.detach().item())
         return loss.detach()

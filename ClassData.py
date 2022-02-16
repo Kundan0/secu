@@ -15,7 +15,7 @@ class myDataset(Dataset):
         self.json_dir=json_dir
         self.json_data=json.load(open(self.json_dir))
         #self.yolo_model=torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-        self.limit=500
+        self.limit=2000
         self.yolo_model=yolo_model
         self.deep_sort=deep_sort
     
@@ -50,10 +50,11 @@ class myDataset(Dataset):
             left,top,right,bottom=values[2]
             third_frame_track_centers.append(((right+left)/2,(bottom+top)/2))
         
-        print("tracked centers on third frame",third_frame_track_centers)
-
         
-        id=third_frame[self.match(center,third_frame_track_centers)][1] # returning the id of best match vehicle index 1 stores id and match returns the index of vehicle
+
+        returned_match=self.match(center,third_frame_track_centers,True)
+        
+        id=third_frame[returned_match][1] # returning the id of best match vehicle index 1 stores id and match returns the index of vehicle
         print('original id ',id)
         myTracks=[]
         
@@ -87,7 +88,7 @@ class myDataset(Dataset):
                             
                         
                             
-                else:
+                elif len(myTracks)>2:
                     X_values=np.arange(1,len(myTracks)+1).reshape(-1,1)
                     
                     left_values=np.array([val[0] for val in myTracks])
@@ -121,7 +122,9 @@ class myDataset(Dataset):
                     print("linearly regretted track ",track_)
                     last_track_center=((l+r)/2,(t+b)/2)
                     id=id_
-                
+                else:
+                    myTracks.append([myTracks[-1]])
+                    id=id_
                
         myTracks=torch.tensor(myTracks)
         
@@ -131,16 +134,17 @@ class myDataset(Dataset):
     def __len__(self):
         return len(self.json_data)
     
-    def match(self,bbox_center,tracks):
+    def match(self,bbox_center,tracks,third=False):
         
         loss=[self.Calcloss(bbox_center,track) for track in tracks]
         
         mini=min(loss)
         print("distances ",loss)
         print("the minimum distace got is ",mini)
-        if (mini>self.limit):
+        if (mini>self.limit) and not third:
             print("Limit crossed")
-            return 
+
+            return
         return loss.index(mini)
 
 

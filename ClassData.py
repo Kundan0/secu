@@ -61,9 +61,9 @@ class myDataset(Dataset):
             for values in frame:
                 left_,top_,right_,bottom_=values[2]
                 updated_tracks.append(((left_+right_)/2,(top_+bottom_)/2))
-                print("frame ",idx," id ",values[1])
+                
                 if values[1]==id:
-                    
+                    print("tracks ",values[2])
                     myTracks.append(values[2])
                     last_track_center=updated_tracks[-1]
                     found=True
@@ -76,7 +76,7 @@ class myDataset(Dataset):
                     for values in frame:
                         
                         if values[1]==id:
-                            
+                            print("new tracks ",values[2])
                             myTracks.append(values[2])
                             last_track_center=((left_+right_)/2,(top_+bottom_)/2)
                             
@@ -102,6 +102,8 @@ class myDataset(Dataset):
         
         mini=min(loss)
         print("the minimum distace got is ",mini)
+        if (loss>self.limit):
+            print("Limit crossed")
         return loss.index(mini)
 
 

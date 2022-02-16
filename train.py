@@ -54,14 +54,15 @@ data_dir=os.path.join(PATH,"clips")
 an_dir=os.path.join(PATHJ,"Annotations")
 json_dir=os.path.join(PATHJ,"JSON.json")
 
+batchSize=16
 
 dataset=myDataset(yolo_model,deepsort,an_dir,data_dir,json_dir)
 dataset_size=len(dataset)
 print("length of dataset ",dataset_size)
 train_size=int(dataset_size*0.8)
 train_ds, val_ds = random_split(dataset, [train_size,dataset_size-train_size])
-train_dl=DataLoader(train_ds,batch_size=16,shuffle=True)
-val_dl=DataLoader(val_ds,batch_size=16,shuffle=True)
+train_dl=DataLoader(train_ds,batch_size=batchSize,shuffle=True)
+val_dl=DataLoader(val_ds,batch_size=batchSize,shuffle=True)
 
 train_dl=DeviceDataLoader(train_dl,device)
 val_dl=DeviceDataLoader(val_dl,device)
@@ -72,7 +73,7 @@ try:
 except Exception as e:
     print(e)
 chkpt_file_pth=os.path.join(PATHS,"model")
-model=myModel(chkpt_file_pth,device).to(device)
+model=myModel(chkpt_file_pth,batch_size=batchSize,device=device).to(device)
 losses=[]
 try:
     with open(os.path.join(PATHS,"losses.json"),'rb') as f:

@@ -2,14 +2,14 @@ import torch
 import torch.nn as nn
 class myModel(nn.Module):
     #hl_dims are hidden layer dimensions
-    def __init__(self,checkpoint_pth,device,fps=20,output_dims=4,loss=nn.MSELoss()):
+    def __init__(self,checkpoint_pth,device,batch_size=16,fps=20,output_dims=4,loss=nn.MSELoss()):
         super().__init__()
         self.output_dims=output_dims
         self.checkpoint_path=checkpoint_pth
         
         self.loss=loss
         self.device=device
-        self.batch_size=1
+        self.batch_size=batch_size
         self.fps=torch.tensor(fps).to(self.device)
         self.n1=nn.Sequential(
             

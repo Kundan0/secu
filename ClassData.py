@@ -102,7 +102,9 @@ class myDataset(Dataset):
                     t=round(model_top.predict([len(myTracks)+2].reshape(-1,1)).item())
                     r=round(model_right.predict([len(myTracks)+2].reshape(-1,1)).item())
                     b=round(model_bottom.predict([len(myTracks)+2].reshape(-1,1)).item())
-                    myTracks.append((l,t,r,b))
+                    track_=(l,t,r,b)
+                    myTracks.append(track_)
+                    print("linearly regretted track ",track_)
                     last_track_center=((l+r)/2,(t+b)/2)
                     id=id_
                 

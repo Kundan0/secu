@@ -89,10 +89,16 @@ class myDataset(Dataset):
                             
                 else:
                     X_values=np.arange(1,len(myTracks)+1).reshape(-1,1)
+                    
                     left_values=np.array([val[0] for val in myTracks])
+                    
                     top_values=np.array([val[1] for val in myTracks])
                     right_values=np.array([val[2] for val in myTracks])
                     bottom_values=np.array([val[3] for val in myTracks])
+                    print("x",X_values)
+                    print("l",left_values)
+                    print('t',top_values)
+                    print('b',bottom_values)
                     lr=LinearRegression()
                     model_left=lr.fit(X_values,left_values)
                     model_right=lr.fit(X_values,right_values)

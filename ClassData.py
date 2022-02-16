@@ -89,7 +89,7 @@ class myDataset(Dataset):
                 
                
         myTracks=torch.tensor(myTracks)
-        print(myTracks)
+        
         
         return (myTracks,label)
 

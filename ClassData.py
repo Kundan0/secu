@@ -1,5 +1,7 @@
 
 import torch
+from sklearn.linear_model import LinearRegression
+import numpy as np
 from torch.utils.data import Dataset
 import json
 import os
@@ -71,6 +73,7 @@ class myDataset(Dataset):
             if not found:
                 print("not found for folder ",folder)
                 print("frame ",frame)
+                id_=id
                 try:
                     id=frame[self.match(last_track_center,updated_tracks)][1]
                     print("id changed to ",id)
@@ -84,9 +87,23 @@ class myDataset(Dataset):
                         
                             
                 except:
-                    print("Vehicle Not found")
-                    sys.exit()
-            
+                    X_values=np.arange(1,len(myTracks)+1).reshape(-1,1)
+                    left_values=np.array([val[0] for val in myTracks])
+                    top_values=np.array([val[1] for val in myTracks])
+                    right_values=np.array([val[2] for val in myTracks])
+                    bottom_values=np.array([val[3] for val in myTracks])
+                    lr=LinearRegression()
+                    model_left=lr.fit(X_values,left_values)
+                    model_right=lr.fit(X_values,right_values)
+                    model_top=lr.fit(X_values,top_values)
+                    model_bottom=lr.fit(X_values,bottom_values)
+                    l=round(model_left.predict([len(myTracks)+2].reshape(-1,1)).item())
+                    t=round(model_top.predict([len(myTracks)+2].reshape(-1,1)).item())
+                    r=round(model_right.predict([len(myTracks)+2].reshape(-1,1)).item())
+                    b=round(model_bottom.predict([len(myTracks)+2].reshape(-1,1)).item())
+                    myTracks.append((l,t,r,b))
+                    last_track_center=((l+r)/2,(t+b)/2)
+                    id=id_
                 
                
         myTracks=torch.tensor(myTracks)
@@ -106,6 +123,7 @@ class myDataset(Dataset):
         print("the minimum distace got is ",mini)
         if (mini>self.limit):
             print("Limit crossed")
+            return 
         return loss.index(mini)
 
 

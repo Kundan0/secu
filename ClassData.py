@@ -62,7 +62,7 @@ class myDataset(Dataset):
                     myTracks.append(values[2])
                     last_track_center=updated_tracks[-1]
                     found=True
-                    print("found")
+                    
             if not found:
                 print("not found")
                 try:
@@ -94,7 +94,7 @@ class myDataset(Dataset):
     def match(self,bbox_center,tracks):
         
         loss=[self.Calcloss(bbox_center,track) for track in tracks]
-        print("losses ",loss)
+        
         mini=min(loss)
         return loss.index(mini)
 

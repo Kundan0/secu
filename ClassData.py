@@ -56,7 +56,7 @@ class myDataset(Dataset):
         myTracks=[]
         
         for idx,frame in enumerate(track_result):# 
-            found=False #result=[(16,1,(),2),(16,2,(),2)]
+            found=False #frame=[(16,1,(),2),(16,2,(),2)]
             updated_tracks=[]
             for values in frame:
                 left_,top_,right_,bottom_=values[2]
@@ -70,6 +70,7 @@ class myDataset(Dataset):
                     
             if not found:
                 print("not found for folder ",folder)
+                print("frame ",frame)
                 try:
                     id=frame[self.match(last_track_center,updated_tracks)][1]
                     print("id changed to ",id)
@@ -101,6 +102,7 @@ class myDataset(Dataset):
         loss=[self.Calcloss(bbox_center,track) for track in tracks]
         
         mini=min(loss)
+        print("distances ",loss)
         print("the minimum distace got is ",mini)
         if (mini>self.limit):
             print("Limit crossed")

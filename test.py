@@ -135,7 +135,7 @@ class GenTracks():
         
         
         
-        return {"track":myTracks,"velocity":velocity,"position":position}
+        return {"track":myTracks,"velocity":[float(v) for v in velocity],"position":[float(p) for p in position]}
 
     def __len__(self):
         return len(self.json_data)

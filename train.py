@@ -66,12 +66,13 @@ except Exception as e:
 
 def plot_losses():
     
-    plt.plot([loss[1] for loss in losses ], '-bx')
-    plt.plot([loss[2] for loss in losses], '-rx')
+    plt.plot([loss[1] for loss in losses[-10000:] ],[loss[0] for loss in losses[-10000:]], '-bx')
+    plt.plot([loss[2] for loss in losses[-10000:]],[loss[0] for loss in losses[-10000:]], '-rx')
     plt.xlabel('epoch')
     plt.ylabel('loss')
     plt.legend(['Training', 'Validation'])
     plt.title('Loss vs. No. of epochs')
+    plt.imsave(os.path.join(PATHS,"Plot.png"))
     plt.show()
 
 def evaluate(model, val_dl):

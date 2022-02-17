@@ -134,8 +134,8 @@ class GenTracks():
                
         
         
-        
-        return {"track":myTracks,"velocity":[float(v) for v in velocity],"position":[float(p) for p in position]}
+        print('data type of mytrack[][]',type(myTracks[0][0]))
+        return {"track":myTracks,"velocity":velocity,"position":position}
 
     def __len__(self):
         return len(self.json_data)

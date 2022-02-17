@@ -76,7 +76,7 @@ def evaluate(model, val_dl):
     model.eval()
     outputs=[]
     for idx,batch in enumerate(val_dl):
-      print("validating batch number ",idx+1)
+      
       output=model.validation_step(batch)
       outputs.append(output)
       
@@ -107,16 +107,17 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         train_losses=[]
         for idx,batch in enumerate(train_dl):
             
-            print("idx",idx)
+            
             optimizer.zero_grad()
             loss=model.training_step(batch)
             l=loss.detach()
-            print("loss",l)
+            
             loss.backward()
             optimizer.step() 
             train_losses.append(l)
             if idx==2:
                 break
+        
             #print("average_Loss for last 20 batches",np.average([x.item() for x in train_losses[-20:]]))
         mean_tl=torch.stack(train_losses).mean().item()
         print("Performing Model Evaluation   ... wait ")
@@ -132,7 +133,7 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
             pickle.dump(losses,f)
         print(f"mean validation loss for this epoch {ep}is {mean_vl} /n mean training loss is {mean_tl}")
         
-            
+        break    
             
         
         

@@ -13,9 +13,14 @@ class myModel(nn.Module):
         self.fps=torch.tensor(fps).to(self.device)
         self.n1=nn.Sequential(
             
-        nn.Linear(38*4,32),
+        nn.Linear(38*4,256),
+        nn.Linear(256,128),
+        nn.Linear(128,64),
+        nn.Linear(64,32),
+        nn.Linear(32,16),
+        nn.Linear(16,8),
        
-        nn.Linear(32,4)
+        nn.Linear(8,4)
         )
         # self.n2=nn.Sequential(
         #     nn.Linear(5,10),
@@ -50,11 +55,11 @@ class myModel(nn.Module):
         result=self(track)
         loss=self.loss(result.to(torch.float32),label.to(torch.float32))
         
-        print("val loss for this batch ",loss.detach().item())
+        
         return loss.detach()
     
     def validation_epoch_end(self, outputs):
-        print("calculating mean val loss")
+        
         
         epoch_loss = torch.stack(outputs).mean()   # Combine losses
         

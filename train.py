@@ -58,7 +58,7 @@ losses=[]
 try:
     with open(os.path.join(PATHS,"losses.json"),'rb') as f:
                 losses=pickle.load(f)
-                print("losses picked",losses)
+                
 except Exception as e:
     print(e)
             
@@ -97,9 +97,9 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         print("Successfully loaded the model")
         print("Starting from epoch ",trained_epoch+1)
         
-    except:
+    except Exception as e:
         trained_epoch=-1
-        print("Cannot Load Model")
+        print("Cannot Load Model as " ,e)
     
     for ep in range(trained_epoch+1,epochs):
         print("epoch",ep)
@@ -121,13 +121,13 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         
             #print("average_Loss for last 20 batches",np.average([x.item() for x in train_losses[-20:]]))
         mean_tl=torch.stack(train_losses).mean().item()
-        print("Performing Model Evaluation   ... wait ")
+        
         mean_vl=evaluate(model,val_dl)
-        print("Saving model")
+        
         model.save_model(ep,mean_tl,mean_vl,optimizer)
         
         
-        print("Saved ")
+        
         losses.append((ep,mean_tl,mean_vl))
         
         with open(os.path.join(PATHS,"losses.json"),'wb') as f:

@@ -135,7 +135,7 @@ class GenTracks():
         
         
         
-        return np.array(myTracks),label.numpy()
+        return myTracks,label.numpy().tolist()
 
     def __len__(self):
         return len(self.json_data)

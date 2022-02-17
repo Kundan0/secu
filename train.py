@@ -66,8 +66,8 @@ except Exception as e:
 
 def plot_losses():
     
-    plt.plot([loss[1] for loss in losses[-10000:] ],[loss[0] for loss in losses[-10000:]], '-bx')
-    plt.plot([loss[2] for loss in losses[-10000:]],[loss[0] for loss in losses[-10000:]], '-rx')
+    plt.plot([loss[0] for loss in losses[-10000:]],[loss[1] for loss in losses[-10000:]], '-bx')
+    plt.plot([loss[0] for loss in losses[-10000:]],[loss[2] for loss in losses[-10000:]], '-rx')
     plt.xlabel('epoch')
     plt.ylabel('loss')
     plt.legend(['Training', 'Validation'])

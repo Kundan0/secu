@@ -5,7 +5,7 @@ from torch.utils.data import Dataset
 import json
 import os
 import sys
-
+import pickle
 
 sys.path.append(os.path.abspath('./yolov5'))
 from deep_sort.utils.parser import get_config
@@ -135,7 +135,7 @@ class GenTracks():
         
         
         
-        return myTracks,velocity,position
+        return myTracks,float(velocity),float(position)
 
     def __len__(self):
         return len(self.json_data)

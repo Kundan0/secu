@@ -201,7 +201,7 @@ if __name__=="__main__":
         if index==2:
             break
     with open('dataset.json','w') as f:
-        pickle.dump(dataset,f)
+        pickle.dump(str(dataset),f)
     with open('dataset.json') as f:
         data=pickle.load(f)
         print(data[0][0])

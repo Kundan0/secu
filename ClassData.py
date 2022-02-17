@@ -18,6 +18,10 @@ class myDataset(Dataset):
         return (track,label)
 
 
+    def __len__(self):
+        return (len(self.data))
+
+
 
     #     json_data=self.json_data[index]
     #     folder=json_data["folder"]

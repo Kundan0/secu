@@ -156,7 +156,16 @@ class GenTracks():
 
     def Calcloss(self,center1,center2):
         return (center1[0]-center2[0])**2+(center1[1]-center2[1])**2
-    
+
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NpEncoder, self).default(obj)    
 
 if __name__=="__main__":
 
@@ -201,7 +210,7 @@ if __name__=="__main__":
         if index==2:
             break
     with open('dataset.json','w') as f:
-        json.dump(dataset,f)
+        json.dump(dataset,f,cls=NpEncoder)
     with open('dataset.json') as f:
         data=json.load(f)
         print(data[0][0])

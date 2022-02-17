@@ -138,7 +138,7 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
             
         
         
-total_epoch=1000
+total_epoch=10000
 fit(total_epoch,torch.optim.Adam,lr_rate,model,train_dl,val_dl)
 
 plot_losses()

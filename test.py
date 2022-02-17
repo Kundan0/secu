@@ -135,7 +135,7 @@ class GenTracks():
         
         
         
-        return myTracks,velocity,position
+        return {"track":myTracks,"velocity":velocity,"position":position}
 
     def __len__(self):
         return len(self.json_data)
@@ -201,8 +201,8 @@ if __name__=="__main__":
         if index==2:
             break
     with open('dataset.json','w') as f:
-        pickle.dump(str(dataset),f)
+        json.dump(dataset,f)
     with open('dataset.json') as f:
-        data=pickle.load(f)
+        data=json.load(f)
         print(data[0][0])
         print('the type is ',type(data[0][0]))

@@ -72,6 +72,7 @@ def plot_losses():
     plt.ylabel('loss')
     plt.legend(['Training', 'Validation'])
     plt.title('Loss vs. No. of epochs')
+    plt.show()
 
 def evaluate(model, val_dl):
     model.eval()

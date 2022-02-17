@@ -213,5 +213,10 @@ if __name__=="__main__":
         json.dump(dataset,f,cls=NpEncoder)
     with open('dataset.json') as f:
         data=json.load(f)
-        print(data[0][0])
-        print('the type is ',type(data[0][0]))
+        track=data[0]["track"]
+        vel=data[0]["velocity"]
+        pos=data[0]["position"]
+        print(torch.tensor(track))
+        print(torch.tensor(vel))
+        print(torch.tensor(pos))
+        

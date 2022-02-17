@@ -27,6 +27,12 @@ class GenTracks():
         json_data=self.json_data[index]
         folder=json_data["folder"]
         an_index=json_data["an_index"]
+
+        if folder=="301":
+            print('folder 301 to 333')
+            folder="333"
+            an_index=0
+        
         annotation_data=json.load(open(os.path.join(self.annotation_dir,"annotation"+folder+".json")))[an_index]
         velocity=annotation_data['velocity']
         

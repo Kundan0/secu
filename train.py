@@ -118,8 +118,7 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
             loss.backward()
             optimizer.step() 
             train_losses.append(l)
-            if idx==2:
-                break
+            
         
             #print("average_Loss for last 20 batches",np.average([x.item() for x in train_losses[-20:]]))
         mean_tl=torch.stack(train_losses).mean().item()
@@ -135,8 +134,8 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         with open(os.path.join(PATHS,"losses.json"),'wb') as f:
             pickle.dump(losses,f)
         print(f"mean validation loss for this epoch {ep}is {mean_vl} /n mean training loss is {mean_tl}")
-        
-        break    
+        if ep==10:
+            break    
             
         
         

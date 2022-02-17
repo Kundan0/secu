@@ -45,6 +45,8 @@ class myDataset(Dataset):
         id=None
         
         third_frame=track_result[0]
+        if (len(third_frame)==0):
+            print("not found for ",folder)
         third_frame_track_centers=[]
         for values in third_frame:
             left,top,right,bottom=values[2]

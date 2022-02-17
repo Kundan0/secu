@@ -200,7 +200,7 @@ if __name__=="__main__":
         dataset.append(myObject[index])
         if index==2:
             break
-    with open('dataset.json') as f:
+    with open('dataset.json','w') as f:
         json.dump(dataset,f)
     with open('dataset.json') as f:
         data=json.load(f)

@@ -5,13 +5,15 @@ from torch.utils.data import Dataset
 import json
 import os
 import sys
+
+
+sys.path.append(os.path.abspath('./yolov5'))
 from deep_sort.utils.parser import get_config
 from deep_sort.deep_sort import DeepSort
 from yolov5.models.common import DetectMultiBackend
-sys.path.append(os.path.abspath('./YoloTracker'))
 from track import detect
 class GenTracks():
-    def __init__(self):
+    def __init__(self,yolo_model,deep_sort,annotation_dir,data_dir,json_dir):
         self.annotation_dir=annotation_dir
         self.data_dir=data_dir
         self.json_dir=json_dir
@@ -157,6 +159,14 @@ class GenTracks():
     
 
 if __name__=="__main__":
+
+    PATH=os.path.join("/content")
+    PATHJ=os.path.join("/content","secu")
+    PATHS=os.path.join(PATH,"drive","MyDrive","State2")
+
+    data_dir=os.path.join(PATH,"clips")
+    an_dir=os.path.join(PATHJ,"Annotations")
+    json_dir=os.path.join(PATHJ,"JSON.json")
     #device 
     device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')    
     print(device)    
@@ -184,7 +194,7 @@ if __name__=="__main__":
     yolo_model = DetectMultiBackend(yolo_model, device=device, dnn=dnn)
 
 
-    myObject=GenTracks()
+    myObject=GenTracks(yolo_model,deepsort,an_dir,data_dir,json_dir)
     dataset=[]
     for index in range(len(myObject)):
         dataset.append(myObject[index])

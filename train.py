@@ -58,6 +58,7 @@ losses=[]
 try:
     with open(os.path.join(PATHS,"losses.json"),'rb') as f:
                 losses=pickle.load(f)
+                print("losses picked",losses)
 except Exception as e:
     print(e)
             

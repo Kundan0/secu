@@ -28,10 +28,10 @@ class GenTracks():
         folder=json_data["folder"]
         an_index=json_data["an_index"]
         annotation_data=json.load(open(os.path.join(self.annotation_dir,"annotation"+folder+".json")))[an_index]
-        velocity=torch.tensor(annotation_data['velocity'])
+        velocity=annotation_data['velocity']
         
-        position=torch.tensor(annotation_data["position"])
-        label=torch.cat((velocity,position),dim=0)
+        position=annotation_data["position"]
+        
 
         bbox=annotation_data["bbox"]
         left=bbox["left"]
@@ -135,7 +135,7 @@ class GenTracks():
         
         
         
-        return myTracks,label.numpy().tolist()
+        return myTracks,velocity,position
 
     def __len__(self):
         return len(self.json_data)

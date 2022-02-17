@@ -79,7 +79,7 @@ class GenTracks():
                     
             if not found:
                 print("not found for folder ",folder)
-                print("frame ",frame)
+                
                 id_=id
                 returned_match=self.match(last_track_center,updated_tracks)
                 if(returned_match is not None):
@@ -134,7 +134,7 @@ class GenTracks():
                
         
         
-        print('data type of mytrack[][]',type(myTracks[0][0]))
+        
         return {"track":myTracks,"velocity":velocity,"position":position}
 
     def __len__(self):
@@ -207,16 +207,15 @@ if __name__=="__main__":
     dataset=[]
     for index in range(len(myObject)):
         dataset.append(myObject[index])
-        if index==2:
-            break
+        
     with open('dataset.json','w') as f:
         json.dump(dataset,f,cls=NpEncoder)
-    with open('dataset.json') as f:
-        data=json.load(f)
-        track=data[0]["track"]
-        vel=data[0]["velocity"]
-        pos=data[0]["position"]
-        print(torch.tensor(track))
-        print(torch.tensor(vel))
-        print(torch.tensor(pos))
+    # with open('dataset.json') as f:
+    #     data=json.load(f)
+    #     track=data[0]["track"]
+    #     vel=data[0]["velocity"]
+    #     pos=data[0]["position"]
+    #     print(torch.tensor(track))
+    #     print(torch.tensor(vel))
+    #     print(torch.tensor(pos))
         

@@ -74,8 +74,8 @@ class myDataset(Dataset):
                     found=True
                     
             if not found:
-                #print("not found for folder ",folder)
-                #print("frame ",frame)
+                print("not found for folder ",folder)
+                print("frame ",frame)
                 id_=id
                 returned_match=self.match(last_track_center,updated_tracks)
                 if(returned_match is not None):

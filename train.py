@@ -134,13 +134,12 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         with open(os.path.join(PATHS,"losses.json"),'wb') as f:
             pickle.dump(losses,f)
         print(f"mean validation loss for this epoch {ep}is {mean_vl} /n mean training loss is {mean_tl}")
-        if ep==10:
-            break    
+         
             
         
         
-
-fit(500,torch.optim.Adam,lr_rate,model,train_dl,val_dl)
+total_epoch=1000
+fit(total_epoch,torch.optim.Adam,lr_rate,model,train_dl,val_dl)
 
 plot_losses()
 

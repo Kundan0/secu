@@ -45,7 +45,7 @@ class myDataset(Dataset):
         # averages=torch.tensor(averages).to(torch.float32)
         # # print("average depth",averages)
         # # print("std after ",stds)
-        depths=[depth.detach().cpu.numpy() for depth in depths]
+        depths=[depth.detach().cpu().numpy() for depth in depths]
         depths=[np.nanmean(depth) for depth in depths]
         print(depths)
         velocity=torch.tensor(self.data[index]['velocity'])

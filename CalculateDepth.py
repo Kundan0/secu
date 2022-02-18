@@ -41,7 +41,7 @@ def ret_depth(batch,model,device):
     
     start=time()
     _,depth=model(imgs.to(device))
-    print(f"took {time()-start}") 
+    #print(f"took {time()-start}") 
     #print(depth.squeeze(0).squeeze(0).size())
     return depth.squeeze(0)
 

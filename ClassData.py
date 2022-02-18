@@ -22,8 +22,8 @@ class myDataset(Dataset):
         depths=torch.load(folder)
         cropped_depths=[]
         for i in range(3):
-            track=self.data[index]["track"][i*18]
-            left,top,right,bottom=track
+            track_=self.data[index]["track"][i*18]
+            left,top,right,bottom=track_
             left=int(left/self.width_ratio)
             top=int(top/self.height_ratio)
             right=int(right/self.width_ratio)

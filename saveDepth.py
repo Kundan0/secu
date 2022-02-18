@@ -23,21 +23,12 @@ for idx,data in enumerate(annotation_data):
     try:
         os.mkdir(save_folder)
     except:
-        pass
+        break
+        
     filenames=[os.path.join(img_folder,x)for x in ["003.jpg","021.jpg","039.jpg"]]
     depth=[ret_depth(x,model,device).squeeze(0) for x in filenames]
     print('depth ',idx,depth)
     torch.save(depth,os.path.join(save_folder,"depth.pt"))
     
-    if idx==2:
-        print("idx 2 039 depth",depth[-1])
-        print("saved depth shape ",depth[-1].shape)
-        mpimg.imsave('./savedDepth.png',depth[-1].detach().cpu(),cmap='gray')
-        depth=[]
-        break
+   
     depth=[]
-
-data=torch.load(os.path.join(save_folder,"depth.pt"))
-print("data ",data)
-print("last tensor ",data[2])
-

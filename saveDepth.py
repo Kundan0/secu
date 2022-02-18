@@ -23,7 +23,7 @@ for idx,data in enumerate(annotation_data):
     try:
         os.mkdir(save_folder)
     except:
-        break
+        continue
         
     filenames=[os.path.join(img_folder,x)for x in ["003.jpg","021.jpg","039.jpg"]]
     depth=[ret_depth(x,model,device).squeeze(0) for x in filenames]

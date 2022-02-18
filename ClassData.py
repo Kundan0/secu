@@ -25,31 +25,35 @@ class myDataset(Dataset):
         #cropping
         depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
         # print("after cropping depth size",depths[0].size())
-        flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in depths]
-        avg_depth=[np.nanmean(x.detach().cpu().numpy()).item() for x in depths]
-        std_depth=[np.std(x.detach().cpu().numpy()).item() for x in depths]
-        # print("avg depth before ",avg_depth)
-        # print("std depth before ",std_depth)
-        averages=[]
-        stds=[]
-        #removing outliers
-        for i in range(3):
-            avg=avg_depth[i]
-            std=std_depth[i]
-            filtered=[x for x in flat_depths[i] if x>avg-2*std]
+        #flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in depths]
+        # avg_depth=[np.nanmean(x.detach().cpu().numpy()).item() for x in depths]
+        # std_depth=[np.std(x.detach().cpu().numpy()).item() for x in depths]
+        # # print("avg depth before ",avg_depth)
+        # # print("std depth before ",std_depth)
+        # averages=[]
+        # stds=[]
+        # #removing outliers
+        # for i in range(3):
+        #     avg=avg_depth[i]
+        #     std=std_depth[i]
+        #     filtered=[x for x in flat_depths[i] if x>avg-2*std]
            
-            avg=[x for x in filtered if x < avg+2*std]
-            stds.append(np.std(avg))
-            averages.append(np.nanmean(avg))
+        #     avg=[x for x in filtered if x < avg+2*std]
+        #     stds.append(np.std(avg))
+        #     averages.append(np.nanmean(avg))
             
-        averages=torch.tensor(averages).to(torch.float32)
-        # print("average depth",averages)
-        # print("std after ",stds)
+        # averages=torch.tensor(averages).to(torch.float32)
+        # # print("average depth",averages)
+        # # print("std after ",stds)
+        depths=[depth.detach().cpu.numpy() for depth in depths]
+        depths=[np.nanmean(depth) for depth in depths]
+        print(depths)
         velocity=torch.tensor(self.data[index]['velocity'])
         position=torch.tensor(self.data[index]['position'])
         label=torch.cat((velocity,position),dim=0).to(torch.float32)
         #print("result forwarded ",(track,averages,label))
-        return (track,averages,label)
+        
+        return (track,depths,label)
 
 
     def __len__(self):

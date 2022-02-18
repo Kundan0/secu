@@ -58,6 +58,7 @@ class myDataset(Dataset):
             depth=torch.flatten(depth.detach().cpu()).numpy()
             if len(depth)==0:
                 print("empty depth")
+                depth=np.array([60])
             depth = depth[~np.isnan(depth)]
             filtered_depth.append(depth)
         depths=[np.nanmean(x) for x in filtered_depth]

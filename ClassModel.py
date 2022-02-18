@@ -36,17 +36,17 @@ class myModel(nn.Module):
         
 
     def forward(self,track,depths):
-        print("in forward size of depths and tracks ",depths.shape,track.shape)
+        #print("in forward size of depths and tracks ",depths.shape,track.shape)
         track=torch.flatten(track,start_dim=1)
-        print("after flattening track shape ",track.shape)
+        #print("after flattening track shape ",track.shape)
         input=torch.cat((track,depths),dim=1)
-        print("input forwarded to n1 ",input.shape)
+        #print("input forwarded to n1 ",input.shape)
         result=self.n1(input.to(torch.float32))
-        print("result obtained from n1 ",result.shape)
+        #print("result obtained from n1 ",result.shape)
         result=self.n2(torch.cat((result,depths),dim=1))
-        print("result obtained from n2 ",result.shape)
+        #print("result obtained from n2 ",result.shape)
         result=self.n3(torch.cat((result,depths),dim=1))
-        print("result obtained from n3 ",result.shape)
+        #print("result obtained from n3 ",result.shape)
         
         #result=self.n2(torch.cat((result.permute(1,0),self.fps.repeat(1,self.batch_size))).permute(1,0))
         #print("final result shape ",result.shape)

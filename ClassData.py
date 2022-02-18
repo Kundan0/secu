@@ -7,7 +7,7 @@ import json
 import os
 
 class myDataset(Dataset):
-    def __init__(self,dataset_dir,json_dir,depth_dir,height_ratio=10,width_ratio=10):
+    def __init__(self,dataset_dir,json_dir,depth_dir,height_ratio=3,width_ratio=4):
         self.data=json.load(open(dataset_dir))
         self.json_data=json.load(open(json_dir))
         self.depth_dir=depth_dir
@@ -35,9 +35,9 @@ class myDataset(Dataset):
         for i in range(3):
             avg=avg_depth[i]
             std=std_depth[i]
-            filtered=[x for x in flat_depths[i] if x>avg-std]
+            filtered=[x for x in flat_depths[i] if x>avg-2*std]
            
-            avg=[x for x in filtered if x < avg+std]
+            avg=[x for x in filtered if x < avg+2*std]
             stds.append(np.std(avg))
             averages.append(np.mean(avg))
             
@@ -47,7 +47,7 @@ class myDataset(Dataset):
         velocity=torch.tensor(self.data[index]['velocity'])
         position=torch.tensor(self.data[index]['position'])
         label=torch.cat((velocity,position),dim=0).to(torch.float32)
-        print("result forwarded ",(track,averages,label))
+        #print("result forwarded ",(track,averages,label))
         return (track,averages,label)
 
 

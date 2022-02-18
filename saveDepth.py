@@ -5,7 +5,7 @@ import os
 device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')    
 SAVE_PATH="../DepthTen"
 IMG_PATH="/content/clips"
-model=load_ADA("./AdaBins_kitt.pt",device)
+model=load_ADA("./AdaBins_kitti.pt",device)
 
 try:
     os.mkdir(SAVE_PATH)

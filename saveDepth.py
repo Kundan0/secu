@@ -18,7 +18,7 @@ for idx,data in enumerate(annotation_data):
     folder=data["folder"]
     save_folder=os.path.join(SAVE_PATH,folder)
     img_folder=os.path.join(IMG_PATH,folder,"imgs")
-    an_index=annotation_data["an_index"]
+    
     try:
         os.mkdir(save_folder)
     except:

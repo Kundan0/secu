@@ -28,7 +28,7 @@ def image_loader(img):
         img=img.permute(2,0,1)
     elif (isinstance(img,str)):
             #img=loader(Image.open(img).convert('RGB').resize(size, Image.ANTIALIAS))
-            img=torch.from_numpy(cv2.cvtColor(cv2.imread(img)/255.,code=cv2.COLOR_BGR2RGB)).to(torch.float32).permute(2,0,1)
+            img=torch.from_numpy(cv2.cvtColor(cv2.imread(img),cv2.COLOR_BGR2RGB)/255.).to(torch.float32).permute(2,0,1)
             print(img.shape)
 
     return img.unsqueeze(0)

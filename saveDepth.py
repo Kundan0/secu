@@ -39,5 +39,5 @@ for idx,data in enumerate(annotation_data):
 
 data=torch.load(os.path.join(save_folder,"depth.pt"))
 print("data ",data)
-print("first tensor ",data[2])
+print("last tensor ",data[2])
 

@@ -26,14 +26,14 @@ class myDataset(Dataset):
             three_tracks_centers.append(center)
         # print("three tracks",three_tracks)
         depths=torch.load(folder)
-        depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
+        #depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
         
         filtered_depth=[]
         for depth in depths:
             
             depth=torch.flatten(depth.detach().cpu()).numpy()
             if len(depth)==0:
-                print("empyt depth")
+                print("empty depth")
             depth = depth[~np.isnan(depth)]
             filtered_depth.append(depth)
         depths=[np.nanmean(x) for x in filtered_depth]

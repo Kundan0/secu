@@ -18,18 +18,33 @@ class myDataset(Dataset):
         folder=self.json_data[index]["folder"]
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
         track_index=[0,18,36]
-        three_tracks=[self.data[index]["track"][x] for x in track_index]
-        three_tracks_centers=[]
+        #three_tracks=[self.data[index]["track"][x] for x in track_index]
+        depths=torch.load(folder)
+        cropped_depths=[]
+        for i in range(3):
+            track=self.data[index]["track"][i*18]
+            left,top,right,bottom=track
+            left=int(left/self.width_ratio)
+            top=int(top/self.height_ratio)
+            right=int(right/self.width_ratio)
+            print("resized bbox",left,top,right,bottom)
+            try:
+                crop=depths[i][top-5:bottom+5,left-5:right+5]
+            except:
+                print("inside exception ",left,top,right,bottom)
+                crop=depths[i][top:bottom,left:right]
+            cropped_depths.append(crop)
+        #three_tracks_centers=[]
         # for i in range(3):
         #     left,top,right,bottom=three_tracks[i][0],three_tracks[i][1],three_tracks[i][2],three_tracks[i][3]
         #     center=(int((top+bottom)/2),int((left+right)/2))
         #     three_tracks_centers.append(center)
         # print("three tracks",three_tracks)
-        depths=torch.load(folder)
-        depths=[depths[i][int(three_tracks[i][1]/self.height_ratio)-5:int(three_tracks[i][3]/self.height_ratio)+5,int(three_tracks[i][0]/self.width_ratio)-5:int(three_tracks[i][2]/self.width_ratio)+5] for i in range(3)]
+        
+        #depths=[depths[i][int(three_tracks[i][1]/self.height_ratio)-5:int(three_tracks[i][3]/self.height_ratio)+5,int(three_tracks[i][0]/self.width_ratio)-5:int(three_tracks[i][2]/self.width_ratio)+5] for i in range(3)]
         
         filtered_depth=[]
-        for depth in depths:
+        for depth in cropped_depths:
             print("depth.shape ",depth.shape)
             depth=torch.flatten(depth.detach().cpu()).numpy()
             if len(depth)==0:

@@ -38,7 +38,7 @@ class myDataset(Dataset):
                 print("bottom +5",bottom+5)
                 print("left -5",left-5)
                 print("right+5",right+5)
-                crop=depths[i][top-5:bottom+5,left-5:right+5]
+                crop=depths[i][max(top-5,0):min(bottom+5,238),max(left-5,0):min(right+5,318)]
             except:
                 print("inside exception ",left,top,right,bottom)
                 crop=depths[i][top:bottom,left:right]

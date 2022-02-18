@@ -26,6 +26,8 @@ class myDataset(Dataset):
             three_tracks_centers.append(center)
         # print("three tracks",three_tracks)
         depths=torch.load(folder)
+        depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
+        
         filtered_depth=[]
         for depth in depths:
             depth=torch.flatten(depth.detach().cpu()).numpy()
@@ -34,7 +36,6 @@ class myDataset(Dataset):
         depths=[np.nanmean(x) for x in filtered_depth]
         print(depths)
         #cropping
-        #depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
         # print("after cropping depth size",depths[0].size())
         #flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in depths]
         # avg_depth=[np.nanmean(x.detach().cpu().numpy()).item() for x in depths]
@@ -65,7 +66,7 @@ class myDataset(Dataset):
         label=torch.cat((velocity,position),dim=0).to(torch.float32)
         #print("result forwarded ",(track,averages,label))
         
-        return (track,depths.to(torch.float32),label)
+        return (track,torch.tensor(depths).to(torch.float32),label)
 
 
     def __len__(self):

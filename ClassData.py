@@ -19,11 +19,22 @@ class myDataset(Dataset):
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
         track_index=[0,18,36]
         three_tracks=[self.data[index]["track"][x] for x in track_index]
+        three_tracks_centers=[]
+        for i in range(3):
+            left,top,right,bottom=three_tracks[i][0],three_tracks[i][1],three_tracks[i][2],three_tracks[i][3]
+            center=(int((top+bottom)/2),int((left+right)/2))
+            three_tracks_centers.append(center)
         # print("three tracks",three_tracks)
         depths=torch.load(folder)
-        
+        filtered_depth=[]
+        for depth in depths:
+            depth=torch.flatten(depth.detach().cpu()).numpy()
+            depth = depth[~np.isnan(depth)]
+            filtered_depth.append(depth)
+        depths=[np.nanmean(x) for x in filtered_depth]
+        print(depths)
         #cropping
-        depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
+        #depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
         # print("after cropping depth size",depths[0].size())
         #flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in depths]
         # avg_depth=[np.nanmean(x.detach().cpu().numpy()).item() for x in depths]
@@ -45,15 +56,16 @@ class myDataset(Dataset):
         # averages=torch.tensor(averages).to(torch.float32)
         # # print("average depth",averages)
         # # print("std after ",stds)
-        depths=[depth.detach().cpu().numpy() for depth in depths]
-        depths=torch.tensor([np.nanmean(depth) for depth in depths]).to(torch.float32)
-        print(depths)
+        # depths=[depth.detach().cpu().numpy() for depth in depths]
+        # depths=torch.tensor([np.nanmean(depth) for depth in depths]).to(torch.float32)
+        # print(depths)
+
         velocity=torch.tensor(self.data[index]['velocity'])
         position=torch.tensor(self.data[index]['position'])
         label=torch.cat((velocity,position),dim=0).to(torch.float32)
         #print("result forwarded ",(track,averages,label))
         
-        return (track,depths,label)
+        return (track,depths.to(torch.float32),label)
 
 
     def __len__(self):

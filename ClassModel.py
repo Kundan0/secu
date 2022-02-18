@@ -13,28 +13,36 @@ class myModel(nn.Module):
         self.fps=torch.tensor(fps).to(self.device)
         self.n1=nn.Sequential(
             
-        nn.Linear(38*4,256),
-        nn.Linear(256,128),
-        nn.Linear(128,64),
-        nn.Linear(64,32),
-        nn.Linear(32,16),
-        nn.Linear(16,8),
-       
-        nn.Linear(8,4)
+            nn.Linear(38*4+3,256),
+            nn.Linear(256,128),
+        
         )
-        # self.n2=nn.Sequential(
-        #     nn.Linear(5,10),
-        #     nn.Linear(10,4)
-        # )
+        self.n2=nn.Sequential(
+            
+            nn.Linear(128+3,64),
+            nn.Linear(64,32),
+        
+        )
+        self.n3=nn.Sequential(
+            
+            nn.Linear(32+3,16),
+            nn.Linear(16,8),
+       
+            nn.Linear(8,4)
+        )
+       
         
         
         
 
-    def forward(self,track):
+    def forward(self,track,depths):
         
         track=torch.flatten(track,start_dim=1)
-        
-        result=self.n1(track.to(torch.float32))
+        input=torch.cat((track,depths),dim=1)
+        result=self.n1(input.to(torch.float32))
+        result=self.n2(torch.cat((result,depths),dim=1))
+        result=self.n3(torch.cat((result,depths),dim=1))
+
         
         #result=self.n2(torch.cat((result.permute(1,0),self.fps.repeat(1,self.batch_size))).permute(1,0))
         #print("final result shape ",result.shape)
@@ -43,16 +51,16 @@ class myModel(nn.Module):
 
 
     def training_step(self,batch):
-        track,label=batch
-        result=self(track)
+        track,depths,label=batch
+        result=self(track,depths)
         loss=self.loss(result.to(torch.float32),label.to(torch.float32))
         
         return loss
     
     def validation_step(self,batch):
         
-        track,label=batch
-        result=self(track)
+        track,depths,label=batch
+        result=self(track,depths)
         loss=self.loss(result.to(torch.float32),label.to(torch.float32))
         
         

@@ -7,10 +7,12 @@ import json
 import os
 
 class myDataset(Dataset):
-    def __init__(self,dataset_dir,json_dir,depth_dir):
+    def __init__(self,dataset_dir,json_dir,depth_dir,height_ratio=10,width_ratio=10):
         self.data=json.load(open(dataset_dir))
         self.json_data=json.load(open(json_dir))
         self.depth_dir=depth_dir
+        self.height_ratio=height_ratio
+        self.width_ratio=width_ratio
     def __getitem__(self,index):
         track=torch.tensor(self.data[index]['track'])
         folder=self.json_data[index]["folder"]

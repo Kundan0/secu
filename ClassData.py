@@ -19,16 +19,16 @@ class myDataset(Dataset):
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
         track_index=[0,18,36]
         three_tracks=[self.data[index]["track"][x] for x in track_index]
-        print("three tracks",three_tracks)
+        # print("three tracks",three_tracks)
         depths=torch.load(folder)
         #cropping
         depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
-        print("after cropping depth size",depths[0].size())
+        # print("after cropping depth size",depths[0].size())
         flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in depths]
         avg_depth=[torch.mean(x).item() for x in depths]
         std_depth=[torch.std(x).item() for x in depths]
-        print("avg depth before ",avg_depth)
-        print("std depth before ",std_depth)
+        # print("avg depth before ",avg_depth)
+        # print("std depth before ",std_depth)
         averages=[]
         stds=[]
         #removing outliers
@@ -36,14 +36,14 @@ class myDataset(Dataset):
             avg=avg_depth[i]
             std=std_depth[i]
             filtered=[x for x in flat_depths[i] if x>avg-std]
-            print("type of filtered intermediate",filtered)
+           
             avg=[x for x in filtered if x < avg+std]
             stds.append(np.std(avg))
             averages.append(np.mean(avg))
             
         averages=torch.tensor(averages).to(torch.float32)
-        print("average depth",averages)
-        print("std after ",stds)
+        # print("average depth",averages)
+        # print("std after ",stds)
         velocity=torch.tensor(self.data[index]['velocity'])
         position=torch.tensor(self.data[index]['position'])
         label=torch.cat((velocity,position),dim=0).to(torch.float32)

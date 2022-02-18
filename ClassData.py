@@ -1,6 +1,6 @@
 
 import torch
-from sklearn.linear_model import LinearRegression
+import cv2
 import numpy as np
 from torch.utils.data import Dataset
 import json
@@ -12,6 +12,7 @@ class myDataset(Dataset):
     
     def __getitem__(self,index):
         track=torch.tensor(self.data[index]['track'])
+
         velocity=torch.tensor(self.data[index]['velocity'])
         position=torch.tensor(self.data[index]['position'])
         label=torch.cat((velocity,position),dim=0)

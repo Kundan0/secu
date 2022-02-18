@@ -5,3 +5,6 @@
 [submodule "deep_sort/deep/reid"]
 	path = deep_sort/deep/reid
 	url = https://github.com/KaiyangZhou/deep-person-reid
+[submodule "AdaBins"]
+	path = AdaBins
+	url = https://github.com/Kundan0/AdaBins.git

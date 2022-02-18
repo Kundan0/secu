@@ -14,7 +14,7 @@ class myDataset(Dataset):
         self.height_ratio=height_ratio
         self.width_ratio=width_ratio
     def __getitem__(self,index):
-        track=torch.tensor(self.data[index]['track'])
+        track=torch.tensor(self.data[index]['track']).to(torch.float32)
         folder=self.json_data[index]["folder"]
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
         track_index=[0,18,36]
@@ -41,12 +41,12 @@ class myDataset(Dataset):
             stds.append(np.std(avg))
             averages.append(np.mean(avg))
             
-        averages=torch.tensor(averages)
+        averages=torch.tensor(averages).to(torch.float32)
         print("average depth",averages)
         print("std after ",stds)
         velocity=torch.tensor(self.data[index]['velocity'])
         position=torch.tensor(self.data[index]['position'])
-        label=torch.cat((velocity,position),dim=0)
+        label=torch.cat((velocity,position),dim=0).to(torch.float32)
         return (track,averages,label)
 
 

@@ -23,13 +23,16 @@ for idx,data in enumerate(annotation_data):
         os.mkdir(save_folder)
     except:
         pass
-    filenames=[os.path.join(img_folder,x)for x in ["003.jpg","015.jpg","027.jpg","039.jpg"]]
+    filenames=[os.path.join(img_folder,x)for x in ["003.jpg","021.jpg","039.jpg"]]
     depth=[ret_depth(x,model,device) for x in filenames]
-    for x in filenames:
-        torch.save(depth,os.path.join(save_folder,x.replace(".jpg",".pt")))
+    
+    torch.save(depth,os.path.join(save_folder,"depth.pt"))
+    depth=[]
     if idx==2:
+        print(depth[-1])
         break
 
-data=torch.load(os.path.join(save_folder,x))
-print("data 0 0",data[0][0])
+data=torch.load(os.path.join(save_folder,"depth.pt"))
+print("data ",data)
+print("first tensor ",data[0])
 

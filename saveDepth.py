@@ -32,7 +32,7 @@ for idx,data in enumerate(annotation_data):
     if idx==2:
         print("idx 2 039 depth",depth[-1])
         print("saved depth shape ",depth[-1].shape)
-        mpimg.imsave('./savedDepth.png',depth[-1].detach(),cmap='gray')
+        mpimg.imsave('./savedDepth.png',depth[-1].detach().cpu(),cmap='gray')
         depth=[]
         break
     depth=[]

@@ -26,7 +26,7 @@ class myDataset(Dataset):
         depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
         # print("after cropping depth size",depths[0].size())
         flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in depths]
-        avg_depth=[np.mean(x.detach().cpu().numpy()).item() for x in depths]
+        avg_depth=[np.nanmean(x.detach().cpu().numpy()).item() for x in depths]
         std_depth=[np.std(x.detach().cpu().numpy()).item() for x in depths]
         # print("avg depth before ",avg_depth)
         # print("std depth before ",std_depth)
@@ -40,7 +40,7 @@ class myDataset(Dataset):
            
             avg=[x for x in filtered if x < avg+2*std]
             stds.append(np.std(avg))
-            averages.append(np.mean(avg))
+            averages.append(np.nanmean(avg))
             
         averages=torch.tensor(averages).to(torch.float32)
         # print("average depth",averages)

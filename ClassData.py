@@ -7,16 +7,35 @@ import json
 import os
 
 class myDataset(Dataset):
-    def __init__(self,dataset_dir):
+    def __init__(self,dataset_dir,json_dir,depth_dir):
         self.data=json.load(open(dataset_dir))
-    
+        self.json_data=json.load(open(json_dir))
+        self.depth_dir=depth_dir
     def __getitem__(self,index):
         track=torch.tensor(self.data[index]['track'])
-
+        folder=self.json_data[index]["folder"]
+        folder=os.path.join(self.depth_dir,folder,"depth.pt")
+        track_index=[0,18,36]
+        three_tracks=[self.data[index]["track"][x] for x in track_index]
+        depths=torch.load(folder)
+        #cropping
+        depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
+        flat_depths=[torch.flatten(d).numpy() for d in depths]
+        avg_depth=[torch.mean(x).item() for x in depths]
+        std_depth=[torch.std(x).item() for x in depths]
+        averages=[]
+        #removing outliers
+        for i in range(3):
+            avg=avg_depth[i]
+            std=std_depth[i]
+            avg=[x for x in flat_depths[i] if x>avg-2*std]
+            avg=[x for x in avg if x < avg+2*std]
+            averages.append(np.mean(avg))
+        averages=torch.tensor(averages)
         velocity=torch.tensor(self.data[index]['velocity'])
         position=torch.tensor(self.data[index]['position'])
         label=torch.cat((velocity,position),dim=0)
-        return (track,label)
+        return (track,averages,label)
 
 
     def __len__(self):

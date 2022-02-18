@@ -3,10 +3,15 @@ from CalculateDepth import ret_depth,load_ADA
 import json
 import os
 device= torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')    
-SAVE_PATH="./DepthTen"
+SAVE_PATH="../DepthTen"
 IMG_PATH="/content/clips"
 model=load_ADA("./AdaBins_kitt.pt",device)
 
+try:
+    os.mkdir(SAVE_PATH)
+except Exception as e:
+    print(e)
+    
 annotation_data=json.load(open('./JSON.json'))
 
 for idx,data in enumerate(annotation_data):

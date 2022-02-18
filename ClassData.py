@@ -47,6 +47,7 @@ class myDataset(Dataset):
         velocity=torch.tensor(self.data[index]['velocity'])
         position=torch.tensor(self.data[index]['position'])
         label=torch.cat((velocity,position),dim=0).to(torch.float32)
+        print("result forwarded ",(track,averages,label))
         return (track,averages,label)
 
 

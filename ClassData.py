@@ -27,6 +27,7 @@ class myDataset(Dataset):
             left=int(left/self.width_ratio)
             top=int(top/self.height_ratio)
             right=int(right/self.width_ratio)
+            bottom=int(bottom/self.height_ratio)
             print("resized bbox",left,top,right,bottom)
             try:
                 crop=depths[i][top-5:bottom+5,left-5:right+5]

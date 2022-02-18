@@ -20,17 +20,17 @@ class myDataset(Dataset):
         track_index=[0,18,36]
         three_tracks=[self.data[index]["track"][x] for x in track_index]
         three_tracks_centers=[]
-        for i in range(3):
-            left,top,right,bottom=three_tracks[i][0],three_tracks[i][1],three_tracks[i][2],three_tracks[i][3]
-            center=(int((top+bottom)/2),int((left+right)/2))
-            three_tracks_centers.append(center)
+        # for i in range(3):
+        #     left,top,right,bottom=three_tracks[i][0],three_tracks[i][1],three_tracks[i][2],three_tracks[i][3]
+        #     center=(int((top+bottom)/2),int((left+right)/2))
+        #     three_tracks_centers.append(center)
         # print("three tracks",three_tracks)
         depths=torch.load(folder)
-        #depths=[depths[i][int(three_tracks[i][1]/self.height_ratio):int(three_tracks[i][3]/self.height_ratio),int(three_tracks[i][0]/self.width_ratio):int(three_tracks[i][2]/self.width_ratio)] for i in range(3)]
+        depths=[depths[i][int(three_tracks[i][1]/self.height_ratio)-5:int(three_tracks[i][3]/self.height_ratio)+5,int(three_tracks[i][0]/self.width_ratio)-5:int(three_tracks[i][2]/self.width_ratio)+5] for i in range(3)]
         
         filtered_depth=[]
         for depth in depths:
-            
+            print("depth.shape ",depth.shape)
             depth=torch.flatten(depth.detach().cpu()).numpy()
             if len(depth)==0:
                 print("empty depth")

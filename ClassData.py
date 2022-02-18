@@ -18,18 +18,26 @@ class myDataset(Dataset):
         folder=self.json_data[index]["folder"]
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
         track_index=[0,18,36]
+        print("folder",folder)
         #three_tracks=[self.data[index]["track"][x] for x in track_index]
         depths=torch.load(folder)
         cropped_depths=[]
         for i in range(3):
             track_=self.data[index]["track"][i*18]
             left,top,right,bottom=track_
+            print("not resized  bbox",left,top,right,bottom)
             left=int(left/self.width_ratio)
             top=int(top/self.height_ratio)
             right=int(right/self.width_ratio)
             bottom=int(bottom/self.height_ratio)
             print("resized bbox",left,top,right,bottom)
+            depth=depths[i]
+            
             try:
+                print("top -5",top-5)
+                print("bottom +5",bottom+5)
+                print("left -5",left-5)
+                print("right+5",right+5)
                 crop=depths[i][top-5:bottom+5,left-5:right+5]
             except:
                 print("inside exception ",left,top,right,bottom)

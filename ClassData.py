@@ -18,26 +18,26 @@ class myDataset(Dataset):
         folder=self.json_data[index]["folder"]
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
         track_index=[0,18,36]
-        print("folder",folder)
+        #print("folder",folder)
         #three_tracks=[self.data[index]["track"][x] for x in track_index]
         depths=torch.load(folder)
         cropped_depths=[]
         for i in range(3):
             track_=self.data[index]["track"][i*18]
             left,top,right,bottom=track_
-            print("not resized  bbox",left,top,right,bottom)
+            #print("not resized  bbox",left,top,right,bottom)
             left=int(left/self.width_ratio)
             top=int(top/self.height_ratio)
             right=int(right/self.width_ratio)
             bottom=int(bottom/self.height_ratio)
-            print("resized bbox",left,top,right,bottom)
+            #print("resized bbox",left,top,right,bottom)
             depth=depths[i]
             
             try:
-                print("top -5",top-5)
-                print("bottom +5",bottom+5)
-                print("left -5",left-5)
-                print("right+5",right+5)
+                # print("top -5",top-5)
+                # print("bottom +5",bottom+5)
+                # print("left -5",left-5)
+                # print("right+5",right+5)
                 crop=depths[i][max(top-5,0):min(bottom+5,238),max(left-5,0):min(right+5,318)]
             except:
                 print("inside exception ",left,top,right,bottom)
@@ -54,14 +54,21 @@ class myDataset(Dataset):
         
         filtered_depth=[]
         for depth in cropped_depths:
-            print("depth.shape ",depth.shape)
+            #print("depth.shape ",depth.shape)
             depth=torch.flatten(depth.detach().cpu()).numpy()
             if len(depth)==0:
                 print("empty depth")
             depth = depth[~np.isnan(depth)]
             filtered_depth.append(depth)
         depths=[np.nanmean(x) for x in filtered_depth]
-        print(depths)
+        if depths.count(np.nan)==3:
+            print('all nan')
+            depths=np.array([60]).repeat(3)
+            print("converted nans to ",depths)
+        else:
+            if np.nan in depths:
+                print("gotchyaa hahahaha ")
+                depths=np.array([np.nanmean(depths)]).repeat(3)
         #cropping
         # print("after cropping depth size",depths[0].size())
         #flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in depths]

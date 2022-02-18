@@ -30,7 +30,10 @@ class myDataset(Dataset):
         
         filtered_depth=[]
         for depth in depths:
+            
             depth=torch.flatten(depth.detach().cpu()).numpy()
+            if len(depth)==0:
+                print("empyt depth")
             depth = depth[~np.isnan(depth)]
             filtered_depth.append(depth)
         depths=[np.nanmean(x) for x in filtered_depth]

@@ -8,9 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 import json
-from deep_sort.utils.parser import get_config
-from deep_sort.deep_sort import DeepSort
-from yolov5.models.common import DetectMultiBackend
 
 
 #device 
@@ -20,24 +17,6 @@ print(device)
 
 
 
-#Deepsort
-config_deepsort="deep_sort/configs/deep_sort.yaml"
-deep_sort_model="osnet_x0_25"
-cfg = get_config()
-cfg.merge_from_file(config_deepsort)
-
-deepsort = DeepSort(deep_sort_model,
-                    device,
-                    max_dist=cfg.DEEPSORT.MAX_DIST,
-                    max_iou_distance=cfg.DEEPSORT.MAX_IOU_DISTANCE,
-                    max_age=cfg.DEEPSORT.MAX_AGE, n_init=cfg.DEEPSORT.N_INIT, nn_budget=cfg.DEEPSORT.NN_BUDGET,
-                    )
-
-# Load model
-
-yolo_model="yolov5m.pt"
-dnn=False
-yolo_model = DetectMultiBackend(yolo_model, device=device, dnn=dnn)
 
 
 
@@ -52,13 +31,12 @@ PATHS=os.path.join(PATH,"drive","MyDrive","State2")
 #PATH=os.curdir
 
 
-data_dir=os.path.join(PATH,"clips")
-an_dir=os.path.join(PATHJ,"Annotations")
-json_dir=os.path.join(PATHJ,"JSON.json")
+data_dir=os.path.join(PATHJ,"dataset.json")
 
-batchSize=4
 
-dataset=myDataset(yolo_model,deepsort,an_dir,data_dir,json_dir)
+batchSize=64
+
+dataset=myDataset(dataset_dir=data_dir)
 dataset_size=len(dataset)
 print("length of dataset ",dataset_size)
 train_size=int(dataset_size*0.8)
@@ -80,6 +58,7 @@ losses=[]
 try:
     with open(os.path.join(PATHS,"losses.json"),'rb') as f:
                 losses=pickle.load(f)
+                
 except Exception as e:
     print(e)
             
@@ -87,18 +66,20 @@ except Exception as e:
 
 def plot_losses():
     
-    plt.plot([loss[1] for loss in losses ], '-bx')
-    plt.plot([loss[2] for loss in losses], '-rx')
+    plt.plot([loss[0] for loss in losses[-10000:]],[loss[1] for loss in losses[-10000:]], '-bx')
+    plt.plot([loss[0] for loss in losses[-10000:]],[loss[2] for loss in losses[-10000:]], '-rx')
     plt.xlabel('epoch')
     plt.ylabel('loss')
     plt.legend(['Training', 'Validation'])
     plt.title('Loss vs. No. of epochs')
+    plt.savefig(os.path.join(PATHS,"plot.png"))
+    plt.show()
 
 def evaluate(model, val_dl):
     model.eval()
     outputs=[]
     for idx,batch in enumerate(val_dl):
-      print("validating batch number ",idx+1)
+      
       output=model.validation_step(batch)
       outputs.append(output)
       
@@ -118,9 +99,9 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         print("Successfully loaded the model")
         print("Starting from epoch ",trained_epoch+1)
         
-    except:
+    except Exception as e:
         trained_epoch=-1
-        print("Cannot Load Model")
+        print("Cannot Load Model as " ,e)
     
     for ep in range(trained_epoch+1,epochs):
         print("epoch",ep)
@@ -129,35 +110,36 @@ def fit(epochs,optim,learning_rate,model,train_dl,val_dl):
         train_losses=[]
         for idx,batch in enumerate(train_dl):
             
-            print("idx",idx)
+            
             optimizer.zero_grad()
             loss=model.training_step(batch)
             l=loss.detach()
-            print("loss",l)
+            
             loss.backward()
             optimizer.step() 
             train_losses.append(l)
+            
+        
             #print("average_Loss for last 20 batches",np.average([x.item() for x in train_losses[-20:]]))
         mean_tl=torch.stack(train_losses).mean().item()
-        print("Performing Model Evaluation   ... wait ")
+        
         mean_vl=evaluate(model,val_dl)
-        print("Saving model")
+        
         model.save_model(ep,mean_tl,mean_vl,optimizer)
         
         
-        print("Saved ")
+        
         losses.append((ep,mean_tl,mean_vl))
         
         with open(os.path.join(PATHS,"losses.json"),'wb') as f:
             pickle.dump(losses,f)
         print(f"mean validation loss for this epoch {ep}is {mean_vl} /n mean training loss is {mean_tl}")
-        
+         
             
-            
         
         
-
-fit(500,torch.optim.Adam,lr_rate,model,train_dl,val_dl)
+total_epoch=10000
+fit(total_epoch,torch.optim.Adam,lr_rate,model,train_dl,val_dl)
 
 plot_losses()
 

@@ -64,7 +64,7 @@ class GenTracks():
         
         
 
-        returned_match=self.match(center,last_frame_track_centers,True)
+        returned_match=self.match(center,last_frame_track_centers)
         
         id=last_frame[returned_match][1] # returning the id of best match vehicle index 1 stores id and match returns the index of vehicle
         #print('original id ',id)
@@ -84,7 +84,7 @@ class GenTracks():
                     found=True
                     
             if not found:
-                print("id not found for folder ",folder," trying to match from last tracks ")
+                print("id not found for folder ",folder,"index",idx,"trying to match from last tracks ")
                 
                 id_=id
                 returned_match=self.match(last_track_center,updated_tracks)
@@ -144,7 +144,7 @@ class GenTracks():
                     id=id_
                
         myTracks=myTracks[::-1]
-        print("final track returned",myTracks)
+        
         
         return {"track":myTracks,"velocity":velocity,"position":position}
 

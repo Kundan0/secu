@@ -66,7 +66,7 @@ class GenTracks():
                 left,top,right,bottom=values[2]
                 track_centers.append(((right+left)/2,(bottom+top)/2))
             returned_match=self.match(center,track_centers)
-            print("returned match ",returned_match)
+            #print("returned match ",returned_match)
             return returned_match
         upto=None
         id=None
@@ -96,11 +96,11 @@ class GenTracks():
                     myTracks.append(values[2])
                     last_track_center=updated_tracks[-1]
 
-                    print("Surumai bhetiyo ")
+                    #print("Surumai bhetiyo ")
                     found=True
                     
             if not found:
-                print(" id not matched for ",folder," Now matching for last recorded tracks")
+                print(" id not matched for ",folder," frame ",idx," Now matching for last recorded tracks")
                 
                 id_=id
                 returned_match=self.match(last_track_center,updated_tracks)
@@ -109,6 +109,9 @@ class GenTracks():
                     id=frame[returned_match][1]
                     #print("id changed to ",id)
                     left_,top_,right_,bottom_=frame[returned_match][2]
+                    if left_<0 or top_<0 or right_<0 or bottom_<0:
+                        print("Alert, Negative track values for folder ",folder," frame ",idx," got frame yolov5")
+                    
                     last_track_center=((left_+right_)/2,(top_+bottom_)/2)
                             
                     myTracks.append(frame[returned_match][2])
@@ -146,7 +149,7 @@ class GenTracks():
 
                     track_=(l,t,r,b)
                     if l<0 or t<0 or r<0 or b<0:
-                        print("Alert, Negative track values for folder ",folder," frame ",idx," from last")
+                        print("Alert, Negative track values for folder ",folder," frame ",idx," from linear regression")
                     myTracks.append(track_)
                     # print("linearly regretted track ",track_)
                     last_track_center=((l+r)/2,(t+b)/2)

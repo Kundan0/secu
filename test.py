@@ -239,6 +239,7 @@ if __name__=="__main__":
     myObject=GenTracks(yolo_model,deepsort,an_dir,data_dir,json_dir)
     dataset=[]
     for index in range(len(myObject)):
+        print("Done {} %".format(index/14.42))
         dataset.append(myObject[index])
         
     with open('dataset.json','w') as f:

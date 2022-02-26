@@ -77,11 +77,18 @@ class GenTracks():
                 print("Initial frame matching with ",i," from last")
                 id=track_result[i][match][1]
                 tracks_got=track_result[i][match][2]
+                left_,top_,right_,bottom_=tracks_got
+                if left_<0 or top_<0 or right_<0 or bottom_<0:
+                        print("Alert, Negative track values for folder ",folder," frame ",idx," got frame yolov5 , while looping initially")
+                last_track_center=((left_+right_)/2,(top_+bottom_)/2)
+                    
                 upto=i+1
                 for j in range(upto):
                     myTracks.append(tracks_got)
+                    
                 break
-            
+        if upto==None:
+            print("Not any matched for whole 38 frames")
 
         
         for idx,frame in enumerate(track_result[upto:]):# 

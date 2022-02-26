@@ -19,7 +19,7 @@ class GenTracks():
         self.json_dir=json_dir
         self.json_data=json.load(open(self.json_dir))
         #self.yolo_model=torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-        self.limit=1000
+        self.limit=2000
         self.yolo_model=yolo_model
         self.deep_sort=deep_sort
     def __getitem__(self,index):

@@ -60,15 +60,16 @@ class GenTracks():
         #     print("not found for ",folder)
 
         def return_match(frame):
-
+            
             track_centers=[]
             for values in frame:
                 left,top,right,bottom=values[2]
                 track_centers.append(((right+left)/2,(bottom+top)/2))
             returned_match=self.match(center,track_centers)
-        
+            print("returned match ",returned_match)
             return returned_match
-        upto=0
+        upto=None
+        id=None
         for i in range(38):
             match=return_match(track_result[i])
 
@@ -94,7 +95,7 @@ class GenTracks():
                     #print("tracks ",values[2])
                     myTracks.append(values[2])
                     last_track_center=updated_tracks[-1]
-                    
+
                     print("Surumai bhetiyo ")
                     found=True
                     

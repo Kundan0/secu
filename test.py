@@ -68,10 +68,12 @@ class GenTracks():
             returned_match=self.match(center,track_centers)
         
             return returned_match
-
+        upto=0
         for i in range(38):
             match=return_match(track_result[i])
+
             if id is not None:
+                print("Initial frame matching with ",i," from last")
                 id=track_result[i][match][1]
                 tracks_got=track_result[i][match][2]
                 upto=i+1
@@ -92,14 +94,17 @@ class GenTracks():
                     #print("tracks ",values[2])
                     myTracks.append(values[2])
                     last_track_center=updated_tracks[-1]
+                    
+                    print("Surumai bhetiyo ")
                     found=True
                     
             if not found:
-                print("not found for folder ",folder)
+                print(" id not matched for ",folder," Now matching for last recorded tracks")
                 
                 id_=id
                 returned_match=self.match(last_track_center,updated_tracks)
                 if(returned_match is not None):
+                    print("Good ,, bhetiyo last tracked center sanga ")
                     id=frame[returned_match][1]
                     #print("id changed to ",id)
                     left_,top_,right_,bottom_=frame[returned_match][2]
@@ -109,6 +114,7 @@ class GenTracks():
                     
                             
                 elif len(myTracks)>2:
+                    print("Bhetiyena , so linearly regretting")
                     X_values=np.arange(1,len(myTracks)+1).reshape(-1,1)
                     
                     left_values=np.array([val[0] for val in myTracks])
@@ -138,11 +144,14 @@ class GenTracks():
                     #print("prdicted bottom is ",b)
 
                     track_=(l,t,r,b)
+                    if l<0 or t<0 or r<0 or b<0:
+                        print("Alert, Negative track values for folder ",folder," frame ",idx," from last")
                     myTracks.append(track_)
                     # print("linearly regretted track ",track_)
                     last_track_center=((l+r)/2,(t+b)/2)
                     id=id_
                 else:
+                    print("Bhetiyan , length lt 2 , so copying the same value")
                     myTracks.append(myTracks[-1])
                     id=id_
                

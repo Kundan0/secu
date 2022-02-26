@@ -19,7 +19,7 @@ class GenTracks():
         self.json_dir=json_dir
         self.json_data=json.load(open(self.json_dir))
         #self.yolo_model=torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-        self.limit=2000
+        self.limit=400
         self.yolo_model=yolo_model
         self.deep_sort=deep_sort
     def __getitem__(self,index):
@@ -52,25 +52,36 @@ class GenTracks():
         track_result=detect(os.path.join(self.data_dir,folder,"imgs"),self.yolo_model,self.deep_sort)
         track_result.pop(0)
         track_result.pop(0)
+        track_result=track_result[::-1]
         id=None
-        
-        third_frame=track_result[0]
-        if (len(third_frame)==0):
-            print("not found for ",folder)
-        third_frame_track_centers=[]
-        for values in third_frame:
-            left,top,right,bottom=values[2]
-            third_frame_track_centers.append(((right+left)/2,(bottom+top)/2))
-        
-        
-
-        returned_match=self.match(center,third_frame_track_centers,True)
-        
-        id=third_frame[returned_match][1] # returning the id of best match vehicle index 1 stores id and match returns the index of vehicle
-        #print('original id ',id)
         myTracks=[]
         
-        for idx,frame in enumerate(track_result):# 
+        # if (len(third_frame)==0):
+        #     print("not found for ",folder)
+
+        def return_match(frame):
+
+            track_centers=[]
+            for values in frame:
+                left,top,right,bottom=values[2]
+                track_centers.append(((right+left)/2,(bottom+top)/2))
+            returned_match=self.match(center,track_centers)
+        
+            return returned_match
+
+        for i in range(38):
+            match=return_match(track_result[i])
+            if id is not None:
+                id=track_result[i][match][1]
+                tracks_got=track_result[i][match][2]
+                upto=i+1
+                for j in range(upto):
+                    myTracks.append(tracks_got)
+                break
+            
+
+        
+        for idx,frame in enumerate(track_result[upto:]):# 
             found=False #frame=[(16,1,(),2),(16,2,(),2)]
             updated_tracks=[]
             for values in frame:
@@ -91,14 +102,11 @@ class GenTracks():
                 if(returned_match is not None):
                     id=frame[returned_match][1]
                     #print("id changed to ",id)
-                    for values in frame:
-                        
-                        if values[1]==id:
-                            #print("new tracks ",values[2])
-                            myTracks.append(values[2])
-                            last_track_center=((left_+right_)/2,(top_+bottom_)/2)
+                    left_,top_,right_,bottom_=frame[returned_match][2]
+                    last_track_center=((left_+right_)/2,(top_+bottom_)/2)
                             
-                        
+                    myTracks.append(frame[returned_match][2])
+                    
                             
                 elif len(myTracks)>2:
                     X_values=np.arange(1,len(myTracks)+1).reshape(-1,1)
@@ -146,16 +154,15 @@ class GenTracks():
     def __len__(self):
         return len(self.json_data)
     
-    def match(self,bbox_center,tracks,third=False):
+    def match(self,bbox_center,tracks):
         
         loss=[self.Calcloss(bbox_center,track) for track in tracks]
         
         mini=min(loss)
         # print("distances ",loss)
         # print("the minimum distace got is ",mini)
-        if (mini>self.limit) and not third:
-            #print("Limit crossed")
-
+        if (mini>self.limit):
+            print("Limit crossed ")
             return
         return loss.index(mini)
 

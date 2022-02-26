@@ -73,7 +73,7 @@ class GenTracks():
         for i in range(38):
             match=return_match(track_result[i])
 
-            if id is not None:
+            if match is not None:
                 print("Initial frame matching with ",i," from last")
                 id=track_result[i][match][1]
                 tracks_got=track_result[i][match][2]

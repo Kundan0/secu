@@ -61,8 +61,8 @@ class myDataset(Dataset):
         position=torch.tensor(self.data[index]['position'])
         label=torch.cat((velocity,position),dim=0).to(torch.float32)
         #print("result forwarded ",(track,averages,label))
-       
-        return (track,torch.tensor(averages).to(torch.float32),label)
+        averages=torch.tensor(averages).to(torch.float32)
+        return (track,averages,label)
 
 
     def __len__(self):

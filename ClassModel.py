@@ -14,12 +14,12 @@ class myModel(nn.Module):
         self.n1=nn.Sequential(
             
             nn.Linear(38*4+3,256),
-            #nn.BatchNorm1d(256),
+            nn.BatchNorm1d(256),
             nn.ReLU(),
             nn.Dropout(p=0.2),
 
             nn.Linear(256,128),
-            #nn.BatchNorm1d(128),
+            nn.BatchNorm1d(128),
             nn.ReLU(),
             nn.Dropout(p=0.2)
         
@@ -27,12 +27,12 @@ class myModel(nn.Module):
         self.n2=nn.Sequential(
             
             nn.Linear(128+3,64),
-            #nn.BatchNorm1d(64),
+            nn.BatchNorm1d(64),
             nn.ReLU(),
             nn.Dropout(p=0.2),
 
             nn.Linear(64,32),
-            #nn.BatchNorm1d(32),       
+            nn.BatchNorm1d(32),       
             nn.ReLU(),
             nn.Dropout(p=0.2),
         
@@ -40,12 +40,12 @@ class myModel(nn.Module):
         self.n3=nn.Sequential(
             
             nn.Linear(32+3,16),
-            #nn.BatchNorm1d(16),
+            nn.BatchNorm1d(16),
             nn.ReLU(),
             nn.Dropout(p=0.2),
 
             nn.Linear(16,8),
-            #nn.BatchNorm1d(8),
+            nn.BatchNorm1d(8),
             nn.ReLU(),
             nn.Dropout(p=0.2),
             nn.Linear(8,4)
@@ -57,9 +57,9 @@ class myModel(nn.Module):
 
     def forward(self,track,depths):
         
-        print("in forward size of depths and tracks ",depths.shape,track.shape)
+        #print("in forward size of depths and tracks ",depths.shape,track.shape)
         track=torch.flatten(track,start_dim=1)
-        print("after flattening track shape ",track.shape)
+        #print("after flattening track shape ",track.shape)
         # track=nn.BatchNorm1d(152)(track) #4*38
         # print("initial batch norm track output ",track)
         
@@ -85,7 +85,7 @@ class myModel(nn.Module):
         track,depths,label=batch
         result=self(track,depths)
         loss=self.loss(result.to(torch.float32),label.to(torch.float32))
-        print("loss obtatained for this batch is ",loss)
+        #print("loss obtatained for this batch is ",loss)
         return loss
     
     def validation_step(self,batch):

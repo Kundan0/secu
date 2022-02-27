@@ -34,7 +34,7 @@ PATHS=os.path.join(PATH,"drive","MyDrive","State2")
 data_dir=os.path.join(PATHJ,"dataset.json")
 json_dir=os.path.join(PATHJ,"JSON.json")
 depth_dir=os.path.join(PATHJ,"DepthTen")
-batchSize=64
+batchSize=40
 
 dataset=myDataset(data_dir,json_dir,depth_dir)
 dataset_size=len(dataset)

@@ -37,8 +37,8 @@ class myDataset(Dataset):
         flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in cropped_depths]
         avg_depth=[np.nanmean(x.detach().cpu().numpy()).item() for x in cropped_depths]
         std_depth=[np.std(x.detach().cpu().numpy()).item() for x in cropped_depths]
-        print("avg depth before ",avg_depth)
-        print("std depth before ",std_depth)
+        # print("avg depth before ",avg_depth)
+        # print("std depth before ",std_depth)
         averages=[]
         stds=[]
         #removing outliers
@@ -52,8 +52,8 @@ class myDataset(Dataset):
             averages.append(np.nanmean(avg))
             
         averages=torch.tensor(averages).to(torch.float32)
-        print("average depth after ",averages)
-        print("std after ",stds)
+        # print("average depth after ",averages)
+        # print("std after ",stds)
         
         
 

@@ -66,17 +66,17 @@ class myModel(nn.Module):
         # depths=nn.BatchNorm1d(3)(depths)
         # print("initial batch norm depth output ",depths)
         input=torch.cat((track,depths),dim=1)
-        print("input forwarded to n1 ",input.shape)
+        #print("input forwarded to n1 ",input.shape)
         result=self.n1(input.to(torch.float32))
-        print("result obtained from n1 ",result.shape)
+        #print("result obtained from n1 ",result.shape)
         result=self.n2(torch.cat((result,depths),dim=1))
-        print("result obtained from n2 ",result.shape)
+        #print("result obtained from n2 ",result.shape)
         result=self.n3(torch.cat((result,depths),dim=1))
-        print("result obtained from n3 ",result.shape)
+        #print("result obtained from n3 ",result.shape)
         
         #result=self.n2(torch.cat((result.permute(1,0),self.fps.repeat(1,self.batch_size))).permute(1,0))
         #print("final result shape ",result.shape)
-        print(result)
+        #print(result)
         return result
         
 

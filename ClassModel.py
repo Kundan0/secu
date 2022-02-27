@@ -15,10 +15,12 @@ class myModel(nn.Module):
             
             nn.Linear(38*4+3,256),
             nn.BatchNorm1d(256),
+            nn.ReLU(),
             nn.Dropout(p=0.2),
 
             nn.Linear(256,128),
             nn.BatchNorm1d(128),
+            nn.ReLU(),
             nn.Dropout(p=0.2)
         
         )
@@ -26,9 +28,12 @@ class myModel(nn.Module):
             
             nn.Linear(128+3,64),
             nn.BatchNorm1d(64),
+            nn.ReLU(),
             nn.Dropout(p=0.2),
+
             nn.Linear(64,32),
-            nn.BatchNorm1d(32),
+            nn.BatchNorm1d(32),       
+            nn.ReLU(),
             nn.Dropout(p=0.2),
         
         )
@@ -36,9 +41,12 @@ class myModel(nn.Module):
             
             nn.Linear(32+3,16),
             nn.BatchNorm1d(16),
+            nn.ReLU(),
             nn.Dropout(p=0.2),
+
             nn.Linear(16,8),
             nn.BatchNorm1d(8),
+            nn.ReLU(),
             nn.Dropout(p=0.2),
             nn.Linear(8,4)
         )
@@ -48,9 +56,15 @@ class myModel(nn.Module):
         
 
     def forward(self,track,depths):
+        
         print("in forward size of depths and tracks ",depths.shape,track.shape)
         track=torch.flatten(track,start_dim=1)
         print("after flattening track shape ",track.shape)
+        track=nn.BatchNorm1d(152)(track) #4*38
+        print("initial batch norm track output ",track)
+        
+        depths=nn.BatchNorm1d(3)(depths)
+        print("initial batch norm depth output ",depths)
         input=torch.cat((track,depths),dim=1)
         print("input forwarded to n1 ",input.shape)
         result=self.n1(input.to(torch.float32))

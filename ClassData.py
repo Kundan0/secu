@@ -25,12 +25,12 @@ class myDataset(Dataset):
         for i in range(3):
             track_=self.data[index]["track"][i*18]
             left,top,right,bottom=track_
-            print("not resized  bbox",left,top,right,bottom)
+            #print("not resized  bbox",left,top,right,bottom)
             left=round(left/self.width_ratio)
             top=round(top/self.height_ratio)
             right=round(right/self.width_ratio)
             bottom=round(bottom/self.height_ratio)
-            print("resized bbox",left,top,right,bottom)
+            #print("resized bbox",left,top,right,bottom)
             depth=depths[i]
             cropped_depths.append(depth[top:bottom,left:right])
 
@@ -45,9 +45,9 @@ class myDataset(Dataset):
         for i in range(3):
             avg=avg_depth[i]
             std=std_depth[i]
-            filtered=[x for x in flat_depths[i] if x>avg-2*std]
+            filtered=[x for x in flat_depths[i] if x>avg-std]
            
-            avg=[x for x in filtered if x < avg+2*std]
+            avg=[x for x in filtered if x < avg+std]
             stds.append(np.std(avg))
             averages.append(np.nanmean(avg))
             
@@ -61,7 +61,7 @@ class myDataset(Dataset):
         position=torch.tensor(self.data[index]['position'])
         label=torch.cat((velocity,position),dim=0).to(torch.float32)
         #print("result forwarded ",(track,averages,label))
-        print("average depths",averages)
+       
         return (track,torch.tensor(averages).to(torch.float32),label)
 
 

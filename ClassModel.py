@@ -14,12 +14,12 @@ class myModel(nn.Module):
         self.n1=nn.Sequential(
             
             nn.Linear(38*4+3,256),
-            nn.BatchNorm1d(256),
+            #nn.BatchNorm1d(256),
             nn.ReLU(),
             nn.Dropout(p=0.2),
 
             nn.Linear(256,128),
-            nn.BatchNorm1d(128),
+            #nn.BatchNorm1d(128),
             nn.ReLU(),
             nn.Dropout(p=0.2)
         
@@ -27,12 +27,12 @@ class myModel(nn.Module):
         self.n2=nn.Sequential(
             
             nn.Linear(128+3,64),
-            nn.BatchNorm1d(64),
+            #nn.BatchNorm1d(64),
             nn.ReLU(),
             nn.Dropout(p=0.2),
 
             nn.Linear(64,32),
-            nn.BatchNorm1d(32),       
+            #nn.BatchNorm1d(32),       
             nn.ReLU(),
             nn.Dropout(p=0.2),
         
@@ -40,12 +40,12 @@ class myModel(nn.Module):
         self.n3=nn.Sequential(
             
             nn.Linear(32+3,16),
-            nn.BatchNorm1d(16),
+            #nn.BatchNorm1d(16),
             nn.ReLU(),
             nn.Dropout(p=0.2),
 
             nn.Linear(16,8),
-            nn.BatchNorm1d(8),
+            #nn.BatchNorm1d(8),
             nn.ReLU(),
             nn.Dropout(p=0.2),
             nn.Linear(8,4)

@@ -60,11 +60,11 @@ class myModel(nn.Module):
         print("in forward size of depths and tracks ",depths.shape,track.shape)
         track=torch.flatten(track,start_dim=1)
         print("after flattening track shape ",track.shape)
-        track=nn.BatchNorm1d(152)(track) #4*38
-        print("initial batch norm track output ",track)
+        # track=nn.BatchNorm1d(152)(track) #4*38
+        # print("initial batch norm track output ",track)
         
-        depths=nn.BatchNorm1d(3)(depths)
-        print("initial batch norm depth output ",depths)
+        # depths=nn.BatchNorm1d(3)(depths)
+        # print("initial batch norm depth output ",depths)
         input=torch.cat((track,depths),dim=1)
         print("input forwarded to n1 ",input.shape)
         result=self.n1(input.to(torch.float32))

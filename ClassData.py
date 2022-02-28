@@ -24,7 +24,7 @@ class myDataset(Dataset):
         #print("folder",folder)
         #three_tracks=[self.data[index]["track"][x] for x in track_index]
         depths=torch.load(folder)
-        depths=[(depth-torch.mean(depth))/(torch.std(depth))]
+        depths=[(depth-torch.mean(depth))/(torch.std(depth)) for depth in depths]
         cropped_depths=[]
         for i in range(3):
             track_=self.data[index]["track"][i*18]

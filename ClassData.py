@@ -27,7 +27,7 @@ class myDataset(Dataset):
         depths=[(depth-torch.mean(depth))/(torch.std(depth)) for depth in depths]
         cropped_depths=[]
         for i in range(len(depths)):
-            track_=self.data[index]["track"][i*18]
+            track_=self.data[index]["track"][i]
             left,top,right,bottom=track_
             #print("not resized  bbox",left,top,right,bottom)
             left=round(left/self.width_ratio)

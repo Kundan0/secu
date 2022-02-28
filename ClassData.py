@@ -72,6 +72,7 @@ class myDataset(Dataset):
         permutted_track[1]=permutted_track[1]/720
         permutted_track[3]=permutted_track[3]/720
         track=permutted_track.permute(1,0)
+        print(len(averages))
         return (track,averages,label)
 
 

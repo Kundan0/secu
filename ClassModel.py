@@ -26,7 +26,9 @@ class myModel(nn.Module):
         )
         self.n2=nn.Sequential(
             
-            nn.Linear(128+3,64),
+            nn.Linear(128,64),
+            #nn.Linear(128+3,64),
+            
             #nn.BatchNorm1d(64),
             nn.ReLU(),
             nn.Dropout(p=0.2),
@@ -39,7 +41,9 @@ class myModel(nn.Module):
         )
         self.n3=nn.Sequential(
             
-            nn.Linear(32+3,16),
+            #nn.Linear(32+3,16),
+            nn.Linear(32,16),
+            
             #nn.BatchNorm1d(16),
             nn.ReLU(),
             nn.Dropout(p=0.2),
@@ -69,9 +73,11 @@ class myModel(nn.Module):
         #print("input forwarded to n1 ",input.shape)
         result=self.n1(input.to(torch.float32))
         #print("result obtained from n1 ",result.shape)
-        result=self.n2(torch.cat((result,depths),dim=1))
+        #result=self.n2(torch.cat((result,depths),dim=1))
+        result=self.n2(result)
         #print("result obtained from n2 ",result.shape)
-        result=self.n3(torch.cat((result,depths),dim=1))
+        #result=self.n3(torch.cat((result,depths),dim=1))
+        result=self.n3(result)
         #print("result obtained from n3 ",result.shape)
         
         #result=self.n2(torch.cat((result.permute(1,0),self.fps.repeat(1,self.batch_size))).permute(1,0))

@@ -20,13 +20,13 @@ class myDataset(Dataset):
         
         folder=self.json_data[index]["folder"]
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
-        track_index=[0,18,36]
+        # track_index=[0,18,36]
         #print("folder",folder)
         #three_tracks=[self.data[index]["track"][x] for x in track_index]
         depths=torch.load(folder)
         depths=[(depth-torch.mean(depth))/(torch.std(depth)) for depth in depths]
         cropped_depths=[]
-        for i in range(3):
+        for i in range(len(depths)):
             track_=self.data[index]["track"][i*18]
             left,top,right,bottom=track_
             #print("not resized  bbox",left,top,right,bottom)
@@ -78,137 +78,81 @@ class myDataset(Dataset):
         return (len(self.map_data[2]))
 
 
+# import torch
+# import cv2
+# import numpy as np
+# from torch.utils.data import Dataset
+# import json
+# import os
 
-    #     json_data=self.json_data[index]
-    #     folder=json_data["folder"]
-    #     an_index=json_data["an_index"]
-    #     annotation_data=json.load(open(os.path.join(self.annotation_dir,"annotation"+folder+".json")))[an_index]
-    #     velocity=torch.tensor(annotation_data['velocity'])
+# class myDataset(Dataset):
+#     def __init__(self,dataset_dir,json_dir,depth_dir,map_dir,height_ratio=3,width_ratio=4):
+#         self.data=json.load(open(dataset_dir))
+#         self.json_data=json.load(open(json_dir))
+#         self.depth_dir=depth_dir
+#         self.height_ratio=height_ratio
+#         self.width_ratio=width_ratio
+#         self.map_data=json.load(open(map_dir))
+#     def __getitem__(self,index):
+#         index=self.map_data[2][index]
+#         track=torch.tensor(self.data[index]['track']).to(torch.float32)
         
-    #     position=torch.tensor(annotation_data["position"])
-    #     label=torch.cat((velocity,position),dim=0)
+#         folder=self.json_data[index]["folder"]
+#         folder=os.path.join(self.depth_dir,folder,"depth.pt")
+#         track_index=[0,18,36]
+#         #print("folder",folder)
+#         #three_tracks=[self.data[index]["track"][x] for x in track_index]
+#         depths=torch.load(folder)
+#         depths=[(depth-torch.mean(depth))/(torch.std(depth)) for depth in depths]
+#         cropped_depths=[]
+#         for i in range(len(depths)):
+#             track_=self.data[index]["track"][i*18]
+#             left,top,right,bottom=track_
+#             #print("not resized  bbox",left,top,right,bottom)
+#             left=round(left/self.width_ratio)
+#             top=round(top/self.height_ratio)
+#             right=round(right/self.width_ratio)
+#             bottom=round(bottom/self.height_ratio)
+#             #print("resized bbox",left,top,right,bottom)
+#             depth=depths[i]
+#             cropped_depths.append(depth[top:bottom,left:right])
 
-    #     bbox=annotation_data["bbox"]
-    #     left=bbox["left"]
-    #     top=bbox["top"]
-    #     right=bbox["right"]
-    #     bottom=bbox["bottom"]
-    #     bbox=(left,top,right,bottom)
-
-    #     center=(left+right)/2,(top+bottom)/2
-    #     #print("center of bbox",center)
-
-    #     track_result=detect(os.path.join(self.data_dir,folder,"imgs"),self.yolo_model,self.deep_sort)
-    #     track_result.pop(0)
-    #     track_result.pop(0)
-    #     id=None
-        
-    #     third_frame=track_result[0]
-    #     if (len(third_frame)==0):
-    #         print("not found for ",folder)
-    #     third_frame_track_centers=[]
-    #     for values in third_frame:
-    #         left,top,right,bottom=values[2]
-    #         third_frame_track_centers.append(((right+left)/2,(bottom+top)/2))
-        
-        
-
-    #     returned_match=self.match(center,third_frame_track_centers,True)
-        
-    #     id=third_frame[returned_match][1] # returning the id of best match vehicle index 1 stores id and match returns the index of vehicle
-    #     #print('original id ',id)
-    #     myTracks=[]
-        
-    #     for idx,frame in enumerate(track_result):# 
-    #         found=False #frame=[(16,1,(),2),(16,2,(),2)]
-    #         updated_tracks=[]
-    #         for values in frame:
-    #             left_,top_,right_,bottom_=values[2]
-    #             updated_tracks.append(((left_+right_)/2,(top_+bottom_)/2))
-                
-    #             if values[1]==id:
-    #                 #print("tracks ",values[2])
-    #                 myTracks.append(values[2])
-    #                 last_track_center=updated_tracks[-1]
-    #                 found=True
-                    
-    #         if not found:
-    #             print("not found for folder ",folder)
-    #             print("frame ",frame)
-    #             id_=id
-    #             returned_match=self.match(last_track_center,updated_tracks)
-    #             if(returned_match is not None):
-    #                 id=frame[returned_match][1]
-    #                 #print("id changed to ",id)
-    #                 for values in frame:
-                        
-    #                     if values[1]==id:
-    #                         #print("new tracks ",values[2])
-    #                         myTracks.append(values[2])
-    #                         last_track_center=((left_+right_)/2,(top_+bottom_)/2)
-                            
-                        
-                            
-    #             elif len(myTracks)>2:
-    #                 X_values=np.arange(1,len(myTracks)+1).reshape(-1,1)
-                    
-    #                 left_values=np.array([val[0] for val in myTracks])
-                    
-    #                 top_values=np.array([val[1] for val in myTracks])
-    #                 right_values=np.array([val[2] for val in myTracks])
-    #                 bottom_values=np.array([val[3] for val in myTracks])
-    #                 # print("x",X_values)
-    #                 # print("l",left_values)
-    #                 # print('t',top_values)
-    #                 # print('b',bottom_values)
-    #                 # print('r',right_values)
-    #                 lr=LinearRegression()
-    #                 x0=np.array([len(myTracks)+1])
-    #                 #print(x0)
-    #                 model=lr.fit(X_values,left_values)
-    #                 l=model.predict((x0).reshape(-1,1)).item()
-    #                 #print("prdicted left is ",l)
-    #                 model=lr.fit(X_values,right_values)
-    #                 r=model.predict((x0).reshape(-1,1)).item()
-    #                 #print("prdicted right is ",r)
-    #                 model=lr.fit(X_values,top_values)
-    #                 t=model.predict((x0).reshape(-1,1)).item()
-    #                 #print("prdicted top is ",t)
-    #                 model=lr.fit(X_values,bottom_values)
-    #                 b=model.predict((x0).reshape(-1,1)).item()
-    #                 #print("prdicted bottom is ",b)
-
-    #                 track_=(l,t,r,b)
-    #                 myTracks.append(track_)
-    #                 # print("linearly regretted track ",track_)
-    #                 last_track_center=((l+r)/2,(t+b)/2)
-    #                 id=id_
-    #             else:
-    #                 myTracks.append(myTracks[-1])
-    #                 id=id_
-               
-    #     myTracks=torch.tensor(myTracks)
+#         flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in cropped_depths]
+#         avg_depth=[np.nanmean(x.detach().cpu().numpy()).item() for x in cropped_depths]
+#         std_depth=[np.std(x.detach().cpu().numpy()).item() for x in cropped_depths]
+#         # print("avg depth before ",avg_depth)
+#         # print("std depth before ",std_depth)
+#         averages=[]
+#         stds=[]
+#         #removing outliers
+#         for i in range(3):
+#             avg=avg_depth[i]
+#             std=std_depth[i]
+#             filtered=[x for x in flat_depths[i] if x>avg-std]
+           
+#             avg=[x for x in filtered if x < avg+std]
+#             stds.append(np.std(avg))
+#             averages.append(np.nanmean(avg))
+            
+#         averages=torch.tensor(averages).to(torch.float32)
+#         # print("average depth after ",averages)
+#         # print("std after ",stds)
         
         
-    #     return (myTracks,label)
 
-    # def __len__(self):
-    #     return len(self.json_data)
-    
-    # def match(self,bbox_center,tracks,third=False):
-        
-    #     loss=[self.Calcloss(bbox_center,track) for track in tracks]
-        
-    #     mini=min(loss)
-    #     # print("distances ",loss)
-    #     # print("the minimum distace got is ",mini)
-    #     if (mini>self.limit) and not third:
-    #         #print("Limit crossed")
-
-    #         return
-    #     return loss.index(mini)
+#         velocity=torch.tensor(self.data[index]['velocity'])
+#         position=torch.tensor(self.data[index]['position'])
+#         label=torch.cat((velocity,position),dim=0).to(torch.float32)
+#         #print("result forwarded ",(track,averages,label))
+#         permutted_track=track.permute(1,0)
+#         permutted_track[0]=permutted_track[0]/1280
+#         permutted_track[2]=permutted_track[2]/1280
+#         permutted_track[1]=permutted_track[1]/720
+#         permutted_track[3]=permutted_track[3]/720
+#         track=permutted_track.permute(1,0)
+#         return (track,averages,label)
 
 
-    # def Calcloss(self,center1,center2):
-    #     return (center1[0]-center2[0])**2+(center1[1]-center2[1])**2
-    
+#     def __len__(self):
+#         return (len(self.map_data[2]))
+

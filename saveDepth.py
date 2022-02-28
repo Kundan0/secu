@@ -26,8 +26,10 @@ for idx,data in enumerate(annotation_data):
     except:
         continue
         
-    filenames=[os.path.join(img_folder,x)for x in ["003.jpg","021.jpg","039.jpg"]]
-    depth=[ret_depth(x,model,device).squeeze(0) for x in filenames]
+    #filenames=[os.path.join(img_folder,x)for x in ["003.jpg","021.jpg","039.jpg"]]
+    filenames=os.listdir(img_folder)
+    with torch.no_grad():
+        depth=[ret_depth(x,model,device).squeeze(0) for x in filenames]
     
     torch.save(depth,os.path.join(save_folder,"depth.pt"))
     

@@ -7,13 +7,15 @@ import json
 import os
 
 class myDataset(Dataset):
-    def __init__(self,dataset_dir,json_dir,depth_dir,height_ratio=3,width_ratio=4):
+    def __init__(self,dataset_dir,json_dir,depth_dir,map_dir,height_ratio=3,width_ratio=4):
         self.data=json.load(open(dataset_dir))
         self.json_data=json.load(open(json_dir))
         self.depth_dir=depth_dir
         self.height_ratio=height_ratio
         self.width_ratio=width_ratio
+        self.map_data=json.load(open(map_dir))
     def __getitem__(self,index):
+        index=self.map_data[3][index]
         track=torch.tensor(self.data[index]['track']).to(torch.float32)
         folder=self.json_data[index]["folder"]
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
@@ -66,7 +68,7 @@ class myDataset(Dataset):
 
 
     def __len__(self):
-        return (len(self.data))
+        return (len(self.map_data[3]))
 
 
 

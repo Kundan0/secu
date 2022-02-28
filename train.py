@@ -34,9 +34,10 @@ PATHS=os.path.join(PATH,"drive","MyDrive","State2")
 data_dir=os.path.join(PATHJ,"dataset.json")
 json_dir=os.path.join(PATHJ,"JSON.json")
 depth_dir=os.path.join(PATHJ,"DepthTen")
+map_dir=os.path.join(PATHJ,"map.json")
 batchSize=64
 
-dataset=myDataset(data_dir,json_dir,depth_dir)
+dataset=myDataset(data_dir,json_dir,depth_dir,map_dir)
 dataset_size=len(dataset)
 print("length of dataset ",dataset_size)
 train_size=int(dataset_size*0.8)

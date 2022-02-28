@@ -13,7 +13,7 @@ class myModel(nn.Module):
         self.fps=torch.tensor(fps).to(self.device)
         self.n1=nn.Sequential(
             
-            nn.Linear(38*4+40,256),
+            nn.Linear(38*4+38,256),
             #nn.BatchNorm1d(256),
             nn.ReLU(),
             nn.Dropout(p=0.2),

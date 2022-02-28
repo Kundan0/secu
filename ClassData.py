@@ -47,7 +47,7 @@ class myDataset(Dataset):
         averages=[]
         stds=[]
         #removing outliers
-        for i in range(3):
+        for i in range(38):
             avg=avg_depth[i]
             std=std_depth[i]
             filtered=[x for x in flat_depths[i] if x>avg-std]

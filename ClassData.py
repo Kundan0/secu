@@ -17,12 +17,14 @@ class myDataset(Dataset):
     def __getitem__(self,index):
         index=self.map_data[2][index]
         track=torch.tensor(self.data[index]['track']).to(torch.float32)
+        
         folder=self.json_data[index]["folder"]
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
         track_index=[0,18,36]
         #print("folder",folder)
         #three_tracks=[self.data[index]["track"][x] for x in track_index]
         depths=torch.load(folder)
+        depths=[(depth-torch.mean(depth))/(torch.std(depth))]
         cropped_depths=[]
         for i in range(3):
             track_=self.data[index]["track"][i*18]
@@ -63,7 +65,12 @@ class myDataset(Dataset):
         position=torch.tensor(self.data[index]['position'])
         label=torch.cat((velocity,position),dim=0).to(torch.float32)
         #print("result forwarded ",(track,averages,label))
-       
+        permutted_track=track.permute(1,0)
+        permutted_track[0]=permutted_track[0]/1280
+        permutted_track[2]=permutted_track[2]/1280
+        permutted_track[1]=permutted_track[1]/720
+        permutted_track[3]=permutted_track[3]/720
+        track=permutted_track.permute(1,0)
         return (track,averages,label)
 
 

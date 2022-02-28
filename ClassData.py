@@ -15,7 +15,7 @@ class myDataset(Dataset):
         self.width_ratio=width_ratio
         self.map_data=json.load(open(map_dir))
     def __getitem__(self,index):
-        index=self.map_data[2][index]
+        index=self.map_data[3][index]
         track=torch.tensor(self.data[index]['track']).to(torch.float32)
         
         folder=self.json_data[index]["folder"]
@@ -75,7 +75,7 @@ class myDataset(Dataset):
 
 
     def __len__(self):
-        return (len(self.map_data[2]))
+        return (len(self.map_data[3]))
 
 
 # import torch

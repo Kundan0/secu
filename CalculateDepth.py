@@ -30,7 +30,7 @@ def image_loader(img):
             #img=loader(Image.open(img).convert('RGB').resize(size, Image.ANTIALIAS))
             img=cv2.cvtColor(cv2.imread(img),cv2.COLOR_BGR2RGB)/255.
             img=torch.from_numpy(cv2.resize(img,(640,480))).to(torch.float32).permute(2,0,1)
-            print(img.shape)
+            
 
     return img.unsqueeze(0)
     

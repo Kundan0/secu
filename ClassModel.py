@@ -90,7 +90,9 @@ class myModel(nn.Module):
     def training_step(self,batch):
         track,depths,label=batch
         result=self(track,depths)
-        loss=self.loss(result[:,0:2].to(torch.float32),label[:,0:2].to(torch.float32))
+        #loss=self.loss(result[:,0:2].to(torch.float32),label[:,0:2].to(torch.float32))
+        loss=self.loss(result[:,2:4].to(torch.float32),label[:,2:4].to(torch.float32))
+        
         #print("loss obtatained for this batch is ",loss)
         return loss
     
@@ -98,7 +100,8 @@ class myModel(nn.Module):
         
         track,depths,label=batch
         result=self(track,depths)
-        loss=self.loss(result[:,0:2].to(torch.float32),label[:,0:2].to(torch.float32))
+        #loss=self.loss(result[:,0:2].to(torch.float32),label[:,0:2].to(torch.float32))
+        loss=self.loss(result[:,2:4].to(torch.float32),label[:,2:4].to(torch.float32))
         
         
         return loss.detach()

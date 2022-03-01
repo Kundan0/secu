@@ -20,7 +20,7 @@ class myDataset(Dataset):
         
 
         folder=self.json_data[index]["folder"]
-        print("folder",folder)
+        #print("folder",folder)
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
         # track_index=[0,18,36]
         #print("folder",folder)
@@ -41,7 +41,7 @@ class myDataset(Dataset):
             #print("resized bbox",left,top,right,bottom)
             depth=depths[i]
             cropped_depths.append(depth[top:bottom,left:right])
-        print("len of cro depth",len(cropped_depths))
+        #print("len of cro depth",len(cropped_depths))
         flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in cropped_depths]
         avg_depth=[np.nanmean(x.detach().cpu().numpy()).item() for x in cropped_depths]
         std_depth=[np.std(x.detach().cpu().numpy()).item() for x in cropped_depths]
@@ -50,7 +50,7 @@ class myDataset(Dataset):
         averages=[]
         stds=[]
         #removing outliers
-        print("average lenght depth",len(avg_depth))
+        #print("average lenght depth",len(avg_depth))
         for i in range(38):
             avg=avg_depth[i]
             std=std_depth[i]

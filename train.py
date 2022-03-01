@@ -23,7 +23,7 @@ print(device)
 #colab
 PATH=os.path.join("/content")
 PATHJ=os.path.join("/content","secu")
-PATHS=os.path.join(PATH,"drive","MyDrive","State2")
+PATHS=os.path.join(PATH,"drive","MyDrive","State2-[0]")
 #kaggle
 # PATH=os.path.join("/kaggle","working")
 # PATHJ=os.path.join(PATH,"Major")

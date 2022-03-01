@@ -18,7 +18,9 @@ class myDataset(Dataset):
         index=self.map_data[0][index]
         track=torch.tensor(self.data[index]['track']).to(torch.float32)
         
+
         folder=self.json_data[index]["folder"]
+        print("folder",folder)
         folder=os.path.join(self.depth_dir,folder,"depth.pt")
         # track_index=[0,18,36]
         #print("folder",folder)
@@ -26,6 +28,7 @@ class myDataset(Dataset):
         depths=torch.load(folder)
         depths=[(depth-torch.mean(depth))/(torch.std(depth)) for depth in depths]
         cropped_depths=[]
+        print("len of dpeths",len(depths))
         for i in range(2,len(depths)):
             
             track_=self.data[index]["track"][i-2]
@@ -38,7 +41,7 @@ class myDataset(Dataset):
             #print("resized bbox",left,top,right,bottom)
             depth=depths[i]
             cropped_depths.append(depth[top:bottom,left:right])
-
+        print("len of cro depth",len(cropped_depths))
         flat_depths=[torch.flatten(d).detach().cpu().numpy() for d in cropped_depths]
         avg_depth=[np.nanmean(x.detach().cpu().numpy()).item() for x in cropped_depths]
         std_depth=[np.std(x.detach().cpu().numpy()).item() for x in cropped_depths]
@@ -47,6 +50,7 @@ class myDataset(Dataset):
         averages=[]
         stds=[]
         #removing outliers
+        print("average lenght depth",len(avg_depth))
         for i in range(38):
             avg=avg_depth[i]
             std=std_depth[i]

@@ -28,7 +28,7 @@ class myDataset(Dataset):
         depths=torch.load(folder)
         depths=[(depth-torch.mean(depth))/(torch.std(depth)) for depth in depths]
         cropped_depths=[]
-        print("len of dpeths",len(depths))
+        #print("len of dpeths",len(depths))
         for i in range(2,len(depths)):
             
             track_=self.data[index]["track"][i-2]

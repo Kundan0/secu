@@ -42,7 +42,7 @@ class myModel(nn.Module):
         self.n3=nn.Sequential(
             
             nn.Linear(32+38,16),
-            nn.Linear(32,16),
+            #nn.Linear(32,16),
             
             #nn.BatchNorm1d(16),
             nn.ReLU(),
@@ -90,7 +90,7 @@ class myModel(nn.Module):
     def training_step(self,batch):
         track,depths,label=batch
         result=self(track,depths)
-        loss=self.loss(result[:,0:2].to(torch.float32),label[:,0:2].to(torch.float32))
+        loss=self.loss(result[:,0:2],label[:,0:2])
         #loss=self.loss(result[:,2].to(torch.float32),label[:,2].to(torch.float32))
         
         #print("loss obtatained for this batch is ",loss)
@@ -100,7 +100,7 @@ class myModel(nn.Module):
         
         track,depths,label=batch
         result=self(track,depths)
-        loss=self.loss(result[:,0:2].to(torch.float32),label[:,0:2].to(torch.float32))
+        loss=self.loss(result[:,0:2],label[:,0:2])
         #loss=self.loss(result[:,2].to(torch.float32),label[:,2].to(torch.float32))
         
         

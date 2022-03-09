@@ -140,7 +140,9 @@ if __name__=="__main__":
     model=load_ADA(pretrained,device)
     folder='./imgs'
     imgs=[]
-    for img in os.listdir(folder):
+    for idx,img in enumerate(os.listdir(folder)):
+        if idx>19:
+            break
         filename=folder+"/"+img
         imgs.append(cv2.imread(filename))
 

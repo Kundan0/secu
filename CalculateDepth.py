@@ -104,8 +104,8 @@ def image_loader(imgs):
     #         img=torch.from_numpy(cv2.resize(img,(640,480))).to(torch.float32).permute(2,0,1)
             
     res_images=[cv2.resize(image,size) for image in imgs]
-    torch_images=[torch.from_numpy((res_image/255)).permute(2,0,1).unsqueeze(0) for res_image in res_images]
-    output=torch.tensor((len(imgs),3,480,640))
+    torch_images=[torch.from_numpy((res_image/255)).permute(2,0,1).unsqueeze(0).to(torch.float32) for res_image in res_images]
+    output=torch.tensor((len(imgs),3,480,640)).to(torch.float32)
     torch.cat(torch_images,out=output)
     return output
     

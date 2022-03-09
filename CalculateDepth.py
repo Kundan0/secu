@@ -105,7 +105,7 @@ def image_loader(imgs):
             
     res_images=[cv2.resize(image,size) for image in imgs]
     torch_images=[torch.from_numpy((res_image/255)).permute(2,0,1).unsqueeze(0) for res_image in res_images]
-    output=torch.tensor(len(imgs),3,480,640)
+    output=torch.tensor((len(imgs),3,480,640))
     torch.cat(torch_images,out=output)
     return output
     

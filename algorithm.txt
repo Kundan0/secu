@@ -1,0 +1,21 @@
+Algorithm
+1. split the uploaded video into video of 40 frames each
+1. for each video in videos:
+
+2.  tracks=yolotrack(track)->[[frame_idx,id,(left,top,right,bottom),],[],[]]
+    depths=calculatedepth(depth)
+    tracks_=[]
+    for each frame found in first frame:
+        for each vehicle_id:
+            []=forecast(id)->find in how many frames ,id have been identified
+            if vehicle have been located less than 70% time(28/40):
+                #fill the holes with previous approach used in test.py
+                tracks.append(track)
+    for each track:
+        find avg_depths=[]
+        speed=model(track,avg_depths)
+
+
+
+
+

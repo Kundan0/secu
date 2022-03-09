@@ -144,7 +144,7 @@ if __name__=="__main__":
         filename=folder+"/"+img
         imgs.append(cv2.imread(filename))
 
-    depth=ret_depth(imgs,model) #  
+    depth=ret_depth(imgs,model,device) #  
     print(depth.size)
     # print(depth.detach().size())
     # mpimg.imsave('./depth2.jpg',depth.detach(),cmap='gray')

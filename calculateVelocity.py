@@ -265,14 +265,14 @@ for frameIdx,frame in enumerate(tracks):
 for loc,each_elem in enumerate(bucket):
     lastfill=each_elem["lastFill"]
     print("before del empty ",len(each_elem["tracks"]))
-    each_elem["tracks"]=each_elem["tracks"][:lastFill-each_elem["startIdx"]+1]
+    each_elem["tracks"]=each_elem["tracks"][:lastfill-each_elem["startIdx"]+1]
    
     
     track_length=len(each_elem["tracks"])
     print("after del empty ",track_length)
     
     lastfill=track_length-track_length%38 # remove greater than divisible by 38
-    print("before del g 38 ",len(each_elem["tracks"]))
+    
     print("now lastfill",lastfill)
     
     each_elem["tracks"]=each_elem["tracks"][:lastfill]

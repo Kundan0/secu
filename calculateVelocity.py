@@ -242,12 +242,12 @@ for frameIdx,frame in enumerate(tracks):
             each_elem["id"]=each_elem["id"]+1000
             print('after changing ',each_elem["id"])
             print("type of id ",type(each_elem["id"]))
-            each_elem["tracks"]=each_elem["tracks"][:-15] # delete those 
+            each_elem["tracks"]=each_elem["tracks"][:-25] # delete those 
             ending=each_elem["endIdx"]
             if ending is not None:
-                each_elem["endIdx"]=ending-15 # change endIdx to 15 idx before 
+                each_elem["endIdx"]=ending-25 # change endIdx to 15 idx before 
             else:
-                each_elem["endIdx"]=frameIdx-15
+                each_elem["endIdx"]=frameIdx-25
 
 
     print(bucket)    

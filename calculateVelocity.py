@@ -207,7 +207,8 @@ for frameIdx,frame in enumerate(tracks):
             print("not found") # if not found, id may have been changed for the same vehicle , so checking the distance 
             
             center=(left+right)/2,(top+bottom)/2
-            print("error lyaune index",y["lastFill"]-y["startIdx"]-1)
+            for y in bucket:
+                print("error lyaune index",y["lastFill"]-y["startIdx"]-1)
             last_track_center=[((left_+right_)/2,(top_+bottom_)/2) for left_,top_,right_,bottom_ in [y["tracks"][y["lastFill"]-y["startIdx"]-1] for y in bucket]]
             mat=match(center,last_track_center)
             if mat is not None: # finds a match having sq-distance less than limit

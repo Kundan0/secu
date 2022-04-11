@@ -103,26 +103,28 @@ def Calcloss(center1,center2):
     return (center1[0]-center2[0])**2+(center1[1]-center2[1])**2
 
 
-# what if frame exists in previous frame but not on current frames ?
-# there are  two possibilities :
-# 1) the vehicle no more exists in incoming frames (most likely)
-# 2) the vehicle has been mis identified , (less likely but possible)
-# how can we deal with these two problems
-#possible solution
-# for each frame , if the previous identified vehicle is not found, we push an empty track for all those ids.
-# if last 5 tracks are empty, we stop pushing the track, that marks the end of existence of that vehicle in the video
-# but if the previous identified vehicle is found in other succesive frames after being missed in some frames :count <5 .
+# # what if frame exists in previous frame but not on current frames ?
+# # there are  two possibilities :
+# # 1) the vehicle no more exists in incoming frames (most likely)
+# # 2) the vehicle has been mis identified , (less likely but possible)
+# # how can we deal with these two problems
+# #possible solution
+# # for each frame , if the previous identified vehicle is not found, we push an empty track for all those ids.
+# # if last 5 tracks are empty, we stop pushing the track, that marks the end of existence of that vehicle in the video
+# # but if the previous identified vehicle is found in other succesive frames after being missed in some frames :count <5 .
 
-# we fill the hole . (hole is the empty track that was pushed.)
-# how to fill hole ?
+# # we fill the hole . (hole is the empty track that was pushed.)
+# # how to fill hole ?
 
-# we interpolate from all the tracks 
+# # we interpolate from all the tracks 
 
 
 
-bucket=[{"tracks":[tracks[0][x][2]],"id":tracks[0][x][1],"startIdx":0,"endIdx":None,"lastFill":0,"depths":[],"velocity":[]} for x in range(len(tracks[0]))] # bucket[{"id":id,"tracks":[tracks[0][0][2]]},{},{}]
-    
+bucket=[{"tracks":[tracks[0][x][2]],"id":tracks[0][x][1],"startIdx":0,"endIdx":0,"lastFill":0,"depths":[],"velocity":[]} for x in range(len(tracks[0]))] # bucket[{"id":id,"tracks":[tracks[0][0][2]]},{},{}]
+# print("length of tracks",len(tracks))
+# print("bucket",bucket)   
 for frameIdx,frame in enumerate(tracks):
+    print("frameIdx outside",frameIdx)
     if frameIdx ==0 :
         continue
     for vehicle in frame:
@@ -137,16 +139,18 @@ for frameIdx,frame in enumerate(tracks):
         if location is not None: # found same id on next frame 
             print("Found")
             
-             #check if there are holes , 
-            lastFill=bucket[location]["lastFill"]
-            diff_index=frameIdx-lastFill-1
-            print("diff_index",diff_index,frameIdx,lastFill)
+             #check if there are holes ,
+            buc_loc=bucket[location] 
+            lastFill=buc_loc["lastFill"]
+            starti=buc_loc["startIdx"]
+            len_buct=len(buc_loc["tracks"])
+            diff_index=starti+len_buct-lastFill-1
+            print(starti,len_buct,lastFill,diff_index,frameIdx)
             if diff_index!=0: #holes present 
                 #fill holes 
                 fillTracks=bucket[location]["tracks"][:lastFill+1]
-                print(fillTracks)
                 X_values=np.arange(0,lastFill+1).reshape(-1,1)
-                
+                print("fillTracks",fillTracks)
                 left_values=np.array([val[0] for val in fillTracks])
                 top_values=np.array([val[1] for val in fillTracks])
                 right_values=np.array([val[2] for val in fillTracks])
@@ -176,7 +180,8 @@ for frameIdx,frame in enumerate(tracks):
                     bucket[location]["tracks"][lastFill+i+1]=[l[i],t[i],r[i],b[i]]
             bucket[location]["tracks"].append([left,top,right,bottom])
             bucket[location]["lastFill"]=frameIdx
-
+            bucket[location]["endIdx"]+=1
+    
            
 
 
@@ -194,28 +199,41 @@ for frameIdx,frame in enumerate(tracks):
                         break
                 bucket[location]["tracks"].append(vehicle[2])
                 bucket[location]["lastFill"]=frameIdx
+                bucket[location]["endIdx"]+=1
+    
             else: # if couldn't found , that's a new vehicle 
-
-
-                bucket.append({"tracks":[vehicle[2]],"id":vehicle[1],"startIdx":frameIdx,"endIdx":None,"lastFill":frameIdx,"depths":[],"velocity":[]})
-
+                print("frameIdx inside,",frameIdx)
+                bucket.append({"tracks":[vehicle[2]],"id":vehicle[1],"startIdx":frameIdx,"endIdx":frameIdx,"lastFill":frameIdx,"depths":[],"velocity":[]})
+                
     id_in_bucket=[x["id"] for x in bucket]
+    print(id_in_bucket)
     id_in_frame=[vehicle[1] for vehicle in frame]
+    print(id_in_frame)
+
     for loc,each_id_in_bucket in enumerate(id_in_bucket):
         if each_id_in_bucket not in id_in_frame:
             bucket[loc]["tracks"].append([])
+            bucket[loc]["endIdx"]+=1
     
-    for each_elem in bucket:
+    for loc,each_elem in enumerate(bucket):
 
-        if each_elem["tracks"][-5:]==[[] for _ in range(5)]: # if last five tracks are empty
-            each_elem["tracks"]=each_elem["tracks"][:-5] # delete those 
-            each_elem["endIdx"]=frameIdx-5 # change endIdx to 5 idx before 
+        if each_elem["tracks"][-15:]==[[] for _ in range(5)]: # if last five tracks are empty
+            print('last fifteen empty')
+            if len(each_elem["tracks"][:-15])<=5:
+              print("less than 5 tracks")
+              bucket.pop(loc)
+              break
             
-        
+            each_elem["tracks"]=each_elem["tracks"][:-15] # delete those 
+            ending=each_elem["endIdx"]
+            each_elem["endIdx"]=ending-15 # change endIdx to 5 idx before 
+            
+
+    print(bucket)    
 
 
 
-# delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
+# # delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
 
 for each_elem in bucket:
     lastfill=each_elem["lastFill"]
@@ -223,18 +241,18 @@ for each_elem in bucket:
     track_length=lastfill-each_elem["startIdx"]+1
     lastfill=track_length-track_length%38 # remove greater than divisible by 38
     
-    each_elem["tracks"]=each_elem["tracks"][:lastFill]
+    each_elem["tracks"]=each_elem["tracks"][:lastFill+1]
 
-
+print("final ",bucket)
 
 
                 
 
 
 
-#loop
-frames=[]
-count=0
+# #loop
+# frames=[]
+# count=0
 
 
 

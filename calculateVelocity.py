@@ -192,7 +192,7 @@ for frameIdx,frame in enumerate(tracks):
                   b=list(model.predict(x0))
                   print('before adding ',bucket[location])
                   for i in range(len(l)):
-                        bucket[location]["tracks"][lastFill-starti+i+1]=[l[i],t[i],r[i],b[i]]
+                        bucket[location]["tracks"][lastFill-starti+i+1]=[round(l[i]),round(t[i]),round(r[i]),round(b[i])]
                   print('after adding ',bucket[location])
 
             else:
@@ -264,13 +264,19 @@ for frameIdx,frame in enumerate(tracks):
 
 for loc,each_elem in enumerate(bucket):
     lastfill=each_elem["lastFill"]
-    
+    print("before del empty ",len(each_elem["tracks"]))
     each_elem["tracks"]=each_elem["tracks"][:lastFill-each_elem["startIdx"]+1]
-    track_length=len(each_elem["tracks"])
-    lastfill=track_length-track_length%38 # remove greater than divisible by 38
+   
     
-    each_elem["tracks"]=each_elem["tracks"][:lastFill]
-    if len(each_elem["tracks"]==0):
+    track_length=len(each_elem["tracks"])
+    print("after del empty ",track_length)
+    
+    lastfill=track_length-track_length%38 # remove greater than divisible by 38
+    print("before del g 38 ",len(each_elem["tracks"]))
+    print("now lastfill",lastfill)
+    
+    each_elem["tracks"]=each_elem["tracks"][:lastfill]
+    if len(each_elem["tracks"])==0:
         bucket.pop(loc)
 
 

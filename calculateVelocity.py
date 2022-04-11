@@ -240,20 +240,20 @@ for frameIdx,frame in enumerate(tracks):
             
     
     for loc,each_elem in enumerate(bucket):
-
-        if each_elem["tracks"][-25:]==[[] for _ in range(25)]: # if last fifteen tracks are empty
+        cut=30
+        if each_elem["tracks"][-cut:]==[[] for _ in range(cut)]: # if last fifteen tracks are empty
             print('last fifteen empty')
             iid=each_elem["id"]
             print("previous id ",iid)
-            each_elem["id"]=each_elem["id"]+1000
+            each_elem["id"]=each_elem["id"]
             print('after changing ',each_elem["id"])
             print("type of id ",type(each_elem["id"]))
-            each_elem["tracks"]=each_elem["tracks"][:-25] # delete those 
+            each_elem["tracks"]=each_elem["tracks"][:-cut] # delete those 
             ending=each_elem["endIdx"]
             if ending is not None:
-                each_elem["endIdx"]=ending-25 # change endIdx to 15 idx before 
+                each_elem["endIdx"]=ending-cut # change endIdx to 15 idx before 
             else:
-                each_elem["endIdx"]=frameIdx-25
+                each_elem["endIdx"]=frameIdx-cut
 
 
     print(bucket)    

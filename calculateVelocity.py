@@ -264,18 +264,19 @@ for frameIdx,frame in enumerate(tracks):
 
 for loc,each_elem in enumerate(bucket):
     lastfill=each_elem["lastFill"]
-    print("before del empty ",len(each_elem["tracks"]))
+    
     each_elem["tracks"]=each_elem["tracks"][:lastfill-each_elem["startIdx"]+1]
    
     
     track_length=len(each_elem["tracks"])
-    print("after del empty ",track_length)
+    
     
     lastfill=track_length-track_length%38 # remove greater than divisible by 38
     
-    print("now lastfill",lastfill)
+    
     
     each_elem["tracks"]=each_elem["tracks"][:lastfill]
+    each_elem["endIdx"]=each_elem["startIdx"]+lastfill-1
     if len(each_elem["tracks"])==0:
         bucket.pop(loc)
 
@@ -295,7 +296,7 @@ count=0
 
 
 while (video.isOpened()):
-    video.set(2,2) # read from third frames
+    video.set(cv2.CAP_PROP_POS_FRAMES,2) # read from third frames
     ret,frame=video.read()
     if not ret:
         print("Couldn't read video ")

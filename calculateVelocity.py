@@ -152,7 +152,7 @@ for frameIdx,frame in enumerate(tracks):
             
             if diff_index!=0: #holes present
                 print("regressing for holes") 
-                if lastFill-starti<10: # if no elements to linearly regress , start from new
+                if lastFill-starti<5: # if no elements to linearly regress , start from new
                   bucket[location]={"tracks":[vehicle[2]],"id":vehicle[1],"startIdx":frameIdx,"endIdx":None,"lastFill":frameIdx,"depths":[],"velocity":[]}
                   print("not enough size to regress")
                 else:
@@ -235,11 +235,11 @@ for frameIdx,frame in enumerate(tracks):
     
     for loc,each_elem in enumerate(bucket):
 
-        if each_elem["tracks"][-25:]==[[] for _ in range(25)]: # if last fifteen tracks are empty
+        if each_elem["tracks"][-15:]==[[] for _ in range(15)]: # if last fifteen tracks are empty
             print('last fifteen empty')
             iid=each_elem["id"]
             print("previous id ",iid)
-            each_elem["id"]=each_elem["id"]
+            each_elem["id"]=each_elem["id"]+1000
             print('after changing ',each_elem["id"])
             print("type of id ",type(each_elem["id"]))
             each_elem["tracks"]=each_elem["tracks"][:-15] # delete those 
@@ -250,7 +250,7 @@ for frameIdx,frame in enumerate(tracks):
                 each_elem["endIdx"]=frameIdx-15
 
 
-    #print(bucket)    
+    print(bucket)    
 
 print(bucket)
 

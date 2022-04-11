@@ -40,14 +40,14 @@ yolo_model = DetectMultiBackend("yolov5m.pt", device=device, dnn=False)
 
 #velocity_model
 
-model1=myModel('./model.pt',device)
-model1.load_model()
+# model1=myModel('./model.pt',device)
+# model1.load_model()
 
 
 
 #video_info
 #video 
-file_path='./imgs_video.avi'
+file_path='./download.mp4'
 output_file_name='./output.avi'
 video=cv2.VideoCapture(file_path)
 frame_width = int(video.get(3))
@@ -140,9 +140,11 @@ for frameIdx,frame in enumerate(tracks):
              #check if there are holes , 
             lastFill=bucket[location]["lastFill"]
             diff_index=frameIdx-lastFill-1
+            print("diff_index",diff_index,frameIdx,lastFill)
             if diff_index!=0: #holes present 
                 #fill holes 
                 fillTracks=bucket[location]["tracks"][:lastFill+1]
+                print(fillTracks)
                 X_values=np.arange(0,lastFill+1).reshape(-1,1)
                 
                 left_values=np.array([val[0] for val in fillTracks])
@@ -193,17 +195,23 @@ for frameIdx,frame in enumerate(tracks):
                 bucket[location]["tracks"].append(vehicle[2])
                 bucket[location]["lastFill"]=frameIdx
             else: # if couldn't found , that's a new vehicle 
+
+
                 bucket.append({"tracks":[vehicle[2]],"id":vehicle[1],"startIdx":frameIdx,"endIdx":None,"lastFill":frameIdx,"depths":[],"velocity":[]})
-                
-                for each_elem in bucket:
-                    if each_elem["tracks"][-5]==[[] for _ in range(5)]: # if last five tracks are empty
-                        each_elem["tracks"]=each_elem["tracks"][:-5] # delete those 
-                        each_elem["endIdx"]=frameIdx-5 # change endIdx to 5 idx before 
-                        
-                    else:
 
-                        each_elem["tracks"].append([]) # if not empty , add empty
+    id_in_bucket=[x["id"] for x in bucket]
+    id_in_frame=[vehicle[1] for vehicle in frame]
+    for loc,each_id_in_bucket in enumerate(id_in_bucket):
+        if each_id_in_bucket not in id_in_frame:
+            bucket[loc]["tracks"].append([])
+    
+    for each_elem in bucket:
 
+        if each_elem["tracks"][-5:]==[[] for _ in range(5)]: # if last five tracks are empty
+            each_elem["tracks"]=each_elem["tracks"][:-5] # delete those 
+            each_elem["endIdx"]=frameIdx-5 # change endIdx to 5 idx before 
+            
+        
 
 
 
@@ -231,15 +239,15 @@ count=0
 
 
 
-while (video.isOpened()):
-    video.set(2,2) # read from third frames
-    ret,frame=video.read()
-    if not ret:
-        print("Couldn't read video ")
-        sys.exit()
-    frames.append(frame)
-    if count%37 !=0 and count==0:
-        continue
+# while (video.isOpened()):
+#     video.set(2,2) # read from third frames
+#     ret,frame=video.read()
+#     if not ret:
+#         print("Couldn't read video ")
+#         sys.exit()
+#     frames.append(frame)
+#     if count%37 !=0 and count==0:
+#         continue
 
     
     
@@ -247,74 +255,74 @@ while (video.isOpened()):
 
         
     
-    depth0=ret_depth(frames[0:18],depth_model,device)
-    depth1=ret_depth(frames[18:38],depth_model,device)
-    depth=torch.cat((depth0,depth1))
+#     depth0=ret_depth(frames[0:18],depth_model,device)
+#     depth1=ret_depth(frames[18:38],depth_model,device)
+#     depth=torch.cat((depth0,depth1))
 
-    depth=(depth-torch.mean(depth))/(torch.std(depth)).detach().cpu()
-    # kaslai chaiyeko xa liyera jaao hai id haru
+#     depth=(depth-torch.mean(depth))/(torch.std(depth)).detach().cpu()
+#     # kaslai chaiyeko xa liyera jaao hai id haru
 
 
-    for each_elem in bucket:
-        if count>=each_elem["startIdx"] and count<=each_elem["endIdx"] :
+#     for each_elem in bucket:
+#         if count>=each_elem["startIdx"] and count<=each_elem["endIdx"] :
             
-            tracks=each_elem["tracks"][each_elem["startIdx"]:count+1]
+#             tracks=each_elem["tracks"][each_elem["startIdx"]:count+1]
                 
-            for i in range(len(tracks)):
-                left_,top_,right_,bottom_=tracks[i]
-                left_=round(left_/width_ratio)
-                top_=round(top_/height_ratio)
-                right_=round(right_/width_ratio)
-                bottom_=round(bottom_/height_ratio)
-                cropped_depth=depth[each_elem["startIdx"]%38][0][top_:bottom_,left_:right_]
-                flat_depth=torch.flatten(cropped_depth).numpy()
-                avg=np.nanmean(flat_depth).item()
-                std=np.std(flat_depth).item()
-                filtered=[x for x in flat_depth if x>avg-std]
-                avg=[x for x in filtered if x < avg+std]
-                each_elem["depths"].append(np.nanmean(avg))
+#             for i in range(len(tracks)):
+#                 left_,top_,right_,bottom_=tracks[i]
+#                 left_=round(left_/width_ratio)
+#                 top_=round(top_/height_ratio)
+#                 right_=round(right_/width_ratio)
+#                 bottom_=round(bottom_/height_ratio)
+#                 cropped_depth=depth[each_elem["startIdx"]%38][0][top_:bottom_,left_:right_]
+#                 flat_depth=torch.flatten(cropped_depth).numpy()
+#                 avg=np.nanmean(flat_depth).item()
+#                 std=np.std(flat_depth).item()
+#                 filtered=[x for x in flat_depth if x>avg-std]
+#                 avg=[x for x in filtered if x < avg+std]
+#                 each_elem["depths"].append(np.nanmean(avg))
     
-# calculate velocity
+# # calculate velocity
 
-for each_item in bucket:
-    tracks=each_item["tracks"]
-    depths=each_item["depths"]
-    lengthOfDataset=int(len(tracks)/38)
-    tracks=[tracks[38*i:(i+1)*38] for i in range(lengthOfDataset)]
-    depths=[depths[38*i:(i+1)*38] for i in range(lengthOfDataset)]
-    #dataset=[(tracks[i],depths[i]) for i in range(lengthOfDataset)]
-    for i in range(lengthOfDataset):
-        track=torch.tensor(tracks[i],dtype=torch.float32,device=device)
-        permutted_track=track.permute(1,0)
-        permutted_track[0]=permutted_track[0]/frame_width
-        permutted_track[2]=permutted_track[2]/frame_width
-        permutted_track[1]=permutted_track[1]/frame_height
-        permutted_track[3]=permutted_track[3]/frame_height
-        track=permutted_track.permute(1,0)
-        depth=torch.tensor(depths[i],dtype=torch.float32,device=device)
+# for each_item in bucket:
+#     tracks=each_item["tracks"]
+#     depths=each_item["depths"]
+#     lengthOfDataset=int(len(tracks)/38)
+#     tracks=[tracks[38*i:(i+1)*38] for i in range(lengthOfDataset)]
+#     depths=[depths[38*i:(i+1)*38] for i in range(lengthOfDataset)]
+#     #dataset=[(tracks[i],depths[i]) for i in range(lengthOfDataset)]
+#     for i in range(lengthOfDataset):
+#         track=torch.tensor(tracks[i],dtype=torch.float32,device=device)
+#         permutted_track=track.permute(1,0)
+#         permutted_track[0]=permutted_track[0]/frame_width
+#         permutted_track[2]=permutted_track[2]/frame_width
+#         permutted_track[1]=permutted_track[1]/frame_height
+#         permutted_track[3]=permutted_track[3]/frame_height
+#         track=permutted_track.permute(1,0)
+#         depth=torch.tensor(depths[i],dtype=torch.float32,device=device)
         
-        with torch.no_grad():
-            output=model1(track,depth)
-            velx,vely,posx,posy=output
-            each_item["velocity"].append((velx,vely))
-frame_count=0
-while (video.isOpened()):
-    video.set(2,2)
-    ret,frame=video.read()
-    if not ret:
-        print("Couldn't read video ")
-        sys.exit()
-    for each_elem in bucket:
-        start=each_elem["startIdx"]
-        end=each_elem["endIdx"]
+#         with torch.no_grad():
+#             output=model1(track,depth)
+#             velx,vely,posx,posy=output
+#             each_item["velocity"].append((velx,vely))
+# frame_count=0
+# while (video.isOpened()):
+#     video.set(2,2)
+#     ret,frame=video.read()
+#     if not ret:
+#         print("Couldn't read video ")
+#         sys.exit()
+#     for each_elem in bucket:
+#         start=each_elem["startIdx"]
+#         end=each_elem["endIdx"]
         
-        if frame_count>=start and frame_count<=end:
-            left,top,right,bottom=each_elem["tracks"][frame_count-start]
-            velx=each_elem["velocity"][int(frame_count/38)][0]
-            vely=each_elem["velocity"][int(frame_count/38)][1]
-            cv2.rectangle(frame,(left,top),(right,bottom),RECT_COLOR_BBOX,thickness=5)
-            cv2.putText(frame,"V({},{})".format(round(velx,2),vely))
-    video_writer.write(frame)
+#         if frame_count>=start and frame_count<=end:
+#             left,top,right,bottom=each_elem["tracks"][frame_count-start]
+#             velx=each_elem["velocity"][int(frame_count/38)][0]
+#             vely=each_elem["velocity"][int(frame_count/38)][1]
+#             cv2.rectangle(frame,(left,top),(right,bottom),RECT_COLOR_BBOX,thickness=5)
+#             cv2.putText(frame,"V({},{})".format(round(velx,2),vely))
+#     video_writer.write(frame)
 
             
 
@@ -364,5 +372,5 @@ while (video.isOpened()):
 
     
 
-    frames=[]
+#     frames=[]
         

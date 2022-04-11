@@ -36,7 +36,7 @@ if str(ROOT) not in sys.path:
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
 
-def detect(sourc,yolo_model,deepsort,output="inference/output",imgsz=[640],conf_thres=0.3,iou_thres=0.5,fourcc="mp4v",device="",show_video=False,save_vid=False,save_txt=False,classes=[2,3,5,7],agnostic_nms=False,augment=False,evaluate=False,half=False,visualize=False,max_det=1000,project=ROOT / 'runs/track',name="exp",exist_ok=False):
+def detect(sourc,yolo_model,deepsort,output="inference/output",imgsz=[640],conf_thres=0.5,iou_thres=0.5,fourcc="mp4v",device="",show_video=False,save_vid=False,save_txt=False,classes=[2,3,5,7],agnostic_nms=False,augment=False,evaluate=False,half=False,visualize=False,max_det=1000,project=ROOT / 'runs/track',name="exp",exist_ok=False):
     my_output=[]
     imgsz *= 2 if len(imgsz) == 1 else 1  # expand
 

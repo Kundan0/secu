@@ -237,8 +237,11 @@ for frameIdx,frame in enumerate(tracks):
 
         if each_elem["tracks"][-15:]==[[] for _ in range(15)]: # if last fifteen tracks are empty
             print('last fifteen empty')
-            
+            iid=each_elem["id"]
+            print("previous id ",iid)
             each_elem["id"]=each_elem["id"]+1000
+            print('after changing ',each_elem["id"])
+            print("type of id ",type(each_elem["id"]))
             each_elem["tracks"]=each_elem["tracks"][:-15] # delete those 
             ending=each_elem["endIdx"]
             if ending is not None:

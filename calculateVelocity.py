@@ -93,7 +93,7 @@ def match(bbox_center,tracks):
         mini=min(loss)
         # print("distances ",loss)
         # print("the minimum distace got is ",mini)
-        if (mini>625):
+        if (mini>900):
             print("Limit crossed with loss ",mini)
             return
         return loss.index(mini)
@@ -120,7 +120,7 @@ def Calcloss(center1,center2):
 
 
 
-bucket=[{"tracks":[tracks[0][x][2]],"id":tracks[0][x][1],"startIdx":0,"endIdx":0,"lastFill":0,"depths":[],"velocity":[]} for x in range(len(tracks[0]))] # bucket[{"id":id,"tracks":[tracks[0][0][2]]},{},{}]
+bucket=[{"tracks":[tracks[0][x][2]],"id":tracks[0][x][1],"startIdx":0,"endIdx":None,"lastFill":0,"depths":[],"velocity":[]} for x in range(len(tracks[0]))] # bucket[{"id":id,"tracks":[tracks[0][0][2]]},{},{}]
 # print("length of tracks",len(tracks))
 # print("bucket",bucket)   
 for frameIdx,frame in enumerate(tracks):
@@ -141,46 +141,64 @@ for frameIdx,frame in enumerate(tracks):
             
              #check if there are holes ,
             buc_loc=bucket[location] 
-            lastFill=buc_loc["lastFill"]
+            
             starti=buc_loc["startIdx"]
+            endi=buc_loc["endIdx"]
+            lastFill=buc_loc["lastFill"]
             len_buct=len(buc_loc["tracks"])
-            diff_index=starti+len_buct-lastFill-1
-            print(starti,len_buct,lastFill,diff_index,frameIdx)
-            if diff_index!=0: #holes present 
-                #fill holes 
-                fillTracks=bucket[location]["tracks"][:lastFill+1]
-                X_values=np.arange(0,lastFill+1).reshape(-1,1)
-                print("fillTracks",fillTracks)
-                left_values=np.array([val[0] for val in fillTracks])
-                top_values=np.array([val[1] for val in fillTracks])
-                right_values=np.array([val[2] for val in fillTracks])
-                bottom_values=np.array([val[3] for val in fillTracks])
-                
-                # print("x",X_values)
-                # print("l",left_values)
-                # print('t',top_values)
-                # print('b',bottom_values)
-                # print('r',right_values)
+            #diff_index=starti+len_buct-lastFill-1
+            diff_index=len_buct-(lastFill-starti)-1
+            print(len_buct,lastFill,starti,diff_index,frameIdx)
+            
+            if diff_index!=0: #holes present
+                print("regressing for holes") 
+                if lastFill-starti<5: # if no elements to linearly regress , start from new
+                  bucket[location]={"tracks":[vehicle[2]],"id":vehicle[1],"startIdx":frameIdx,"endIdx":None,"lastFill":frameIdx,"depths":[],"velocity":[]}
+                  print("not enough size to regress")
+                else:
+                  #fill holes 
+                  fillTracks=bucket[location]["tracks"][:lastFill-starti+1]
+                  
+                  X_values=np.arange(0,lastFill-starti+1).reshape(-1,1)
+                  #print("fillTracks",fillTracks)
+                  left_values=np.array([val[0] for val in fillTracks])
+                  #print("left",left_values)
+                  top_values=np.array([val[1] for val in fillTracks])
+                  #print("t",top_values)
+                  right_values=np.array([val[2] for val in fillTracks])
+                  #print("r",right_values)
+                  bottom_values=np.array([val[3] for val in fillTracks])
+                  #print("b",bottom_values)
+                  
+                  #print("x",X_values)
+                  #print("len l",len(left_values))
+                  # print('t',top_values)
+                  # print('b',bottom_values)
+                  # print('r',right_values)
 
-                lr=LinearRegression()
-                x0=np.array([lastFill+i for i in range(1,diff_index+1)]).reshape(-1,1)
-                #print(x0)
-                model=lr.fit(X_values,left_values)
-                l=list(model.predict(x0))
-                #print("prdicted left is ",l)
-                model=lr.fit(X_values,right_values)
-                r=list(model.predict(x0))
-                #print("prdicted right is ",r)
-                model=lr.fit(X_values,top_values)
-                t=list(model.predict(x0))
-                #print("prdicted top is ",t)
-                model=lr.fit(X_values,bottom_values)
-                b=list(model.predict(x0))
-                for i in range(len(l)):
-                    bucket[location]["tracks"][lastFill+i+1]=[l[i],t[i],r[i],b[i]]
-            bucket[location]["tracks"].append([left,top,right,bottom])
-            bucket[location]["lastFill"]=frameIdx
-            bucket[location]["endIdx"]+=1
+                  lr=LinearRegression()
+                  x0=np.array([i for i in range(lastFill-starti+1,len_buct)]).reshape(-1,1)
+                  #print("xo",x0)
+                  model=lr.fit(X_values,left_values)
+                  l=list(model.predict(x0))
+                  #print("prdicted left is ",l)
+                  model=lr.fit(X_values,right_values)
+                  r=list(model.predict(x0))
+                  #print("prdicted right is ",r)
+                  model=lr.fit(X_values,top_values)
+                  t=list(model.predict(x0))
+                  #print("prdicted top is ",t)
+                  model=lr.fit(X_values,bottom_values)
+                  b=list(model.predict(x0))
+                  print('before adding ',bucket[location])
+                  for i in range(len(l)):
+                        bucket[location]["tracks"][lastFill-starti+i+1]=[l[i],t[i],r[i],b[i]]
+                  print('after adding ',bucket[location])
+
+            else:
+              bucket[location]["tracks"].append([left,top,right,bottom])
+              bucket[location]["lastFill"]=frameIdx
+              #bucket[location]["endIdx"]+=frameIdx
     
            
 
@@ -189,9 +207,9 @@ for frameIdx,frame in enumerate(tracks):
             print("not found") # if not found, id may have been changed for the same vehicle , so checking the distance 
             
             center=(left+right)/2,(top+bottom)/2
-            last_track_center=[((left_+right_)/2,(top_+bottom_)/2) for left_,top_,right_,bottom_ in [y["tracks"][y["lastFill"]] for y in bucket]]
+            last_track_center=[((left_+right_)/2,(top_+bottom_)/2) for left_,top_,right_,bottom_ in [y["tracks"][y["lastFill"]-y["startIdx"]-1] for y in bucket]]
             mat=match(center,last_track_center)
-            if mat is not None: # finds a match having sq-distance less than limit (625)
+            if mat is not None: # finds a match having sq-distance less than limit
                 id_=bucket[mat]["id"]
                 for elem_idx,each_elem in enumerate(bucket):
                     if each_elem["id"]==id_:
@@ -199,11 +217,11 @@ for frameIdx,frame in enumerate(tracks):
                         break
                 bucket[location]["tracks"].append(vehicle[2])
                 bucket[location]["lastFill"]=frameIdx
-                bucket[location]["endIdx"]+=1
+                #bucket[location]["endIdx"]+=1
     
             else: # if couldn't found , that's a new vehicle 
                 print("frameIdx inside,",frameIdx)
-                bucket.append({"tracks":[vehicle[2]],"id":vehicle[1],"startIdx":frameIdx,"endIdx":frameIdx,"lastFill":frameIdx,"depths":[],"velocity":[]})
+                bucket.append({"tracks":[vehicle[2]],"id":vehicle[1],"startIdx":frameIdx,"endIdx":None,"lastFill":frameIdx,"depths":[],"velocity":[]})
                 
     id_in_bucket=[x["id"] for x in bucket]
     print(id_in_bucket)
@@ -211,27 +229,27 @@ for frameIdx,frame in enumerate(tracks):
     print(id_in_frame)
 
     for loc,each_id_in_bucket in enumerate(id_in_bucket):
-        if each_id_in_bucket not in id_in_frame:
+        if each_id_in_bucket not in id_in_frame and bucket[loc]["endIdx"] is None:
             bucket[loc]["tracks"].append([])
-            bucket[loc]["endIdx"]+=1
+            
     
     for loc,each_elem in enumerate(bucket):
 
-        if each_elem["tracks"][-15:]==[[] for _ in range(5)]: # if last five tracks are empty
+        if each_elem["tracks"][-15:]==[[] for _ in range(15)]: # if last fifteen tracks are empty
             print('last fifteen empty')
-            if len(each_elem["tracks"][:-15])<=5:
-              print("less than 5 tracks")
-              bucket.pop(loc)
-              break
+            
             
             each_elem["tracks"]=each_elem["tracks"][:-15] # delete those 
             ending=each_elem["endIdx"]
-            each_elem["endIdx"]=ending-15 # change endIdx to 5 idx before 
-            
+            if ending is not None:
+                each_elem["endIdx"]=ending-15 # change endIdx to 15 idx before 
+            else:
+                each_elem["endIdx"]=frameIdx-15
 
-    print(bucket)    
 
+    #print(bucket)    
 
+print(bucket)
 
 # # delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
 

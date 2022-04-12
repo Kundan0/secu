@@ -335,21 +335,29 @@ while (video.isOpened()):
 
         print(depth.size())
         for each_elem in (bucket):
+            print("for id ",each_elem["id"])
             tracks=each_elem["tracks"]
             for i in range(count-37,count+1):
                 if i in range(each_elem["startIdx"],each_elem["endIdx"]+1):
-                    
+                    print("         for index ",i)
                     left_,top_,right_,bottom_=tracks[i-each_elem["startIdx"]]
+                    print("             track got ",(left_,top_,right_,bottom_))
                     left_=round(left_/width_ratio)
                     top_=round(top_/height_ratio)
                     right_=round(right_/width_ratio)
                     bottom_=round(bottom_/height_ratio)
+                    print("              after normallizing ",(left_,top_,right_,bottom_))
                     cropped_depth=depth[i%38][top_:bottom_,left_:right_]
+                    print("              cropped depth size ",cropped_depth.size())
                     flat_depth=torch.flatten(cropped_depth).detach().cpu().numpy()
+                    print("               after flattening ",flat_depth.shape," type ",type(flat_depth))
                     avg=np.nanmean(flat_depth).item()
+                    print("               average calculate ",avg)
                     std=np.std(flat_depth).item()
                     filtered=[x for x in flat_depth if x>avg-std and x < avg+std]
+                    print("                filtered ",filtered.shape)
                     #avg=[x for x in filtered if x < avg+std]
+                    print("                 nan mean of avg ",np.nanmean(avg))
                     each_elem["depths"].append(np.nanmean(avg))
 print(bucket)   
 # calculate velocity

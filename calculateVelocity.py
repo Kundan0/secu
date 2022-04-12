@@ -94,7 +94,7 @@ def match(bbox_center,tracks):
         # print("distances ",loss)
         # print("the minimum distace got is ",mini)
         if (mini>900):
-            print("Limit crossed with loss ",mini)
+            #print("Limit crossed with loss ",mini)
             return
         return loss.index(mini)
 
@@ -257,7 +257,7 @@ for frameIdx,frame in enumerate(tracks):
         if each_elem["endIdx"] is not None and len(each_elem["tracks"])<38:
             bucket.pop(loc)
         
-    print(bucket)
+    #print(bucket)
 
 
 # # delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
@@ -287,7 +287,7 @@ for loc,each_elem in enumerate(bucket):
 
 
 
-for loc,each_elem in bucket:
+for loc,each_elem in enumerate(bucket):
     if len(each_elem["tracks"]==0):
         bucket.pop(loc)
 

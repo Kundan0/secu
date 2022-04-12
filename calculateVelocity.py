@@ -288,7 +288,7 @@ for loc,each_elem in enumerate(bucket):
 
 
 for loc,each_elem in enumerate(bucket):
-    if len(each_elem["tracks"]==0):
+    if len(each_elem["tracks"])==0:
         bucket.pop(loc)
 
 

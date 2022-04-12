@@ -287,7 +287,7 @@ for loc,each_elem in enumerate(bucket):
 
 
 
-for each_elem in enumerate(bucket):
+for each_elem in bucket:
     print("before and after removing 0 len ")
     print(len(bucket))
     if len(each_elem["tracks"])==0:

@@ -324,7 +324,7 @@ while (video.isOpened()):
         break
     frames.append(frame)
     count+=1
-    if (count-37)%38 ==0 :
+    if (count-27)%28 ==0 :
         print(count)
         
 
@@ -334,7 +334,7 @@ while (video.isOpened()):
 
         
     
-        depth=ret_depth(frames[0:38],depth_model,device)
+        depth=ret_depth(frames[0:28],depth_model,device)
         #depth0=ret_depth(frames[0:18],depth_model,device)
         
         #depth1=ret_depth(frames[18:38],depth_model,device)
@@ -351,7 +351,7 @@ while (video.isOpened()):
         for each_elem in (bucket):
             print("for id ",each_elem["id"])
             tracks=each_elem["tracks"]
-            for i in range(count-37,count+1):
+            for i in range(count-27,count+1):
                 if i in range(each_elem["startIdx"],each_elem["endIdx"]+1):
                     print("         for index ",i)
                     left_,top_,right_,bottom_=tracks[i-each_elem["startIdx"]]

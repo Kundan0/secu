@@ -297,15 +297,16 @@ count=-1
 video.set(cv2.CAP_PROP_POS_FRAMES,2) # read from third frames
     
 while (video.isOpened()):
+    print("count ",count)
     ret,frame=video.read()
     if not ret:
         print("Couldn't read video ")
         sys.exit()
     frames.append(frame)
     count+=1
-    if count%37 !=0 and count==0:
+    if count%37 ==0 and count!=0:
         print(count)
-        continue
+        
 
     
     
@@ -313,31 +314,31 @@ while (video.isOpened()):
 
         
     
-    depth0=ret_depth(frames[0:18],depth_model,device)
-    depth1=ret_depth(frames[18:38],depth_model,device)
-    depth=torch.cat((depth0,depth1))
+        depth0=ret_depth(frames[0:18],depth_model,device)
+        depth1=ret_depth(frames[18:38],depth_model,device)
+        depth=torch.cat((depth0,depth1))
 
-    depth=(depth-torch.mean(depth))/(torch.std(depth)).detach().cpu()
-    # kaslai chaiyeko xa liyera jaao hai id haru
+        depth=(depth-torch.mean(depth))/(torch.std(depth)).detach().cpu()
+        # kaslai chaiyeko xa liyera jaao hai id haru
 
 
-    for each_elem in enumerate(bucket):
-        tracks=each_elem["tracks"]
-        for i in range(count-37,count+1):
-            if i in range(each_elem["startIdx"],each_elem["endIdx"]+1):
-                
-                left_,top_,right_,bottom_=tracks[i-each_elem["startIdx"]]
-                left_=round(left_/width_ratio)
-                top_=round(top_/height_ratio)
-                right_=round(right_/width_ratio)
-                bottom_=round(bottom_/height_ratio)
-                cropped_depth=depth[i%38][top_:bottom_,left_:right_]
-                flat_depth=torch.flatten(cropped_depth).numpy()
-                avg=np.nanmean(flat_depth).item()
-                std=np.std(flat_depth).item()
-                filtered=[x for x in flat_depth if x>avg-std and x < avg+std]
-                #avg=[x for x in filtered if x < avg+std]
-                each_elem["depths"].append(np.nanmean(avg))
+        for each_elem in (bucket):
+            tracks=each_elem["tracks"]
+            for i in range(count-37,count+1):
+                if i in range(each_elem["startIdx"],each_elem["endIdx"]+1):
+                    
+                    left_,top_,right_,bottom_=tracks[i-each_elem["startIdx"]]
+                    left_=round(left_/width_ratio)
+                    top_=round(top_/height_ratio)
+                    right_=round(right_/width_ratio)
+                    bottom_=round(bottom_/height_ratio)
+                    cropped_depth=depth[i%38][top_:bottom_,left_:right_]
+                    flat_depth=torch.flatten(cropped_depth).numpy()
+                    avg=np.nanmean(flat_depth).item()
+                    std=np.std(flat_depth).item()
+                    filtered=[x for x in flat_depth if x>avg-std and x < avg+std]
+                    #avg=[x for x in filtered if x < avg+std]
+                    each_elem["depths"].append(np.nanmean(avg))
 print(bucket)   
 # calculate velocity
 

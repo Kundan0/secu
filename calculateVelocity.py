@@ -268,12 +268,12 @@ for loc,each_elem in enumerate(bucket):
     print("the original lastfill is",lastfill)
     print("trying to keep from start to lastfill ,length before ",len(each_elem["tracks"]))
        
-    if each_elem["tracks"][-1]==():
+    #if each_elem["tracks"][-1]==():
         
     
         
-        each_elem["tracks"]=each_elem["tracks"][:lastfill-each_elem["startIdx"]+1]
-        print("after ",len(each_elem["tracks"]))
+    each_elem["tracks"]=each_elem["tracks"][:lastfill-each_elem["startIdx"]+1]
+    print("after ",len(each_elem["tracks"]))
         
     track_length=len(each_elem["tracks"])
     
@@ -285,8 +285,7 @@ for loc,each_elem in enumerate(bucket):
     each_elem["tracks"]=each_elem["tracks"][:lastfill]
     print("now length has reduced to ",len(each_elem["tracks"]))
     each_elem["endIdx"]=each_elem["startIdx"]+lastfill-1
-    if len(each_elem["tracks"])==0:
-        bucket.pop(loc)
+    
 
 
 

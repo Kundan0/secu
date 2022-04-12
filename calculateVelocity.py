@@ -285,7 +285,7 @@ for loc,each_elem in enumerate(bucket):
     each_elem["endIdx"]=each_elem["startIdx"]+lastfill-1
     
 
-
+print("before deleting ",bucket)
 
 for each_elem in bucket:
     print("before and after removing 0 len ")

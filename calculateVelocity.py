@@ -128,7 +128,9 @@ for frameIdx,frame in enumerate(tracks):
     if frameIdx ==0 :
         continue
     for vehicle in frame:
+        
         id_got=vehicle[1]
+        print("for vehicle id ",id_got)
         left,top,right,bottom=vehicle[2]
         location=None
         for elem_idx,each_elem in enumerate(bucket):

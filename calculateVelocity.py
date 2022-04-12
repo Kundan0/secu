@@ -326,8 +326,11 @@ while (video.isOpened()):
         depth0=ret_depth(frames[0:18],depth_model,device)
         depth1=ret_depth(frames[18:38],depth_model,device)
         depth=torch.cat((depth0,depth1))
-
-        depth=(depth-torch.mean(depth))/(torch.std(depth))
+        mean_=torch.mean(depth)
+        std_=torch.std(depth)
+        print("mean is ",mean_)
+        print("std is ",std_)
+        depth=(depth-mean_)/std_
         # kaslai chaiyeko xa liyera jaao hai id haru
 
         print(depth.size())

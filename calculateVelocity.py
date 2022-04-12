@@ -361,6 +361,11 @@ while (video.isOpened()):
                     print("                 nan mean of avg ",np.nanmean(avg))
                     each_elem["depths"].append(np.nanmean(avg))
 print(bucket)   
+for loc,each_elem in enumerate(bucket):
+    print("loc ",loc)
+    print("tracklength",len(each_elem["tracks"]))
+    print("depths length",len(each_elem["depths"]))
+
 # calculate velocity
 
 # for each_item in bucket:

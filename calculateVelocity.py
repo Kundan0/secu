@@ -198,9 +198,11 @@ for frameIdx,frame in enumerate(tracks):
                         bucket[location]["tracks"][lastFill-starti+i+1]=[round(l[i]),round(t[i]),round(r[i]),round(b[i])]
                   print('after adding ',bucket[location])
 
-            bucket[location]["tracks"].append((left,top,right,bottom))
-            bucket[location]["lastFill"]=frameIdx
-            
+                  bucket[location]["tracks"].append((left,top,right,bottom))
+                  bucket[location]["lastFill"]=frameIdx
+            else:
+                bucket[location]["tracks"].append((left,top,right,bottom))
+                bucket[location]["lastFill"]=frameIdx
               
 
 

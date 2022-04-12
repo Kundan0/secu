@@ -288,8 +288,11 @@ for loc,each_elem in enumerate(bucket):
 
 
 for loc,each_elem in enumerate(bucket):
+    print("before and after removing 0 len ")
+    print(len(each_elem["tracks"]))
     if len(each_elem["tracks"])==0:
         bucket.pop(loc)
+    print(len(each_elem["tracks"]))
 
 
 

@@ -263,12 +263,15 @@ for frameIdx,frame in enumerate(tracks):
 # # delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
 print("removing empty arrays")
 for loc,each_elem in enumerate(bucket):
+    print("for ",loc)
+    lastfill=each_elem["lastFill"]
+    print("the original lastfill is",lastfill)
+    print("trying to keep from start to lastfill ,length before ",len(each_elem["tracks"]))
+       
     if each_elem["tracks"][-1]==():
         
     
-        lastfill=each_elem["lastFill"]
-        print("the original lastfill is",lastfill)
-        print("trying to keep from start to lastfill ,length before ",len(each_elem["tracks"]))
+        
         each_elem["tracks"]=each_elem["tracks"][:lastfill-each_elem["startIdx"]+1]
         print("after ",len(each_elem["tracks"]))
         

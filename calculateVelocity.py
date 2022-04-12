@@ -335,8 +335,8 @@ while (video.isOpened()):
         
     
         depths=ret_depth(frames[0:unitsize],depth_model,device)
-        depths=[(depth-torch.mean(depth))/(torch.std(depth)) for depth in depths]
-        
+        for i in range(len(depths)):
+            depths[i]=(depths[i]-torch.mean(depths[i]))/torch.std(depths[i])
         #depth0=ret_depth(frames[0:18],depth_model,device)
         
         #depth1=ret_depth(frames[18:38],depth_model,device)

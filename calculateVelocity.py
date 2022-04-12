@@ -312,7 +312,7 @@ print("after deleting 0 len ",bucket)
 frames=[]
 count=-1
 
-
+unitsize=20
 
 video.set(cv2.CAP_PROP_POS_FRAMES,2) # read from third frames
     
@@ -324,7 +324,7 @@ while (video.isOpened()):
         break
     frames.append(frame)
     count+=1
-    if (count-27)%28 ==0 :
+    if (count-(unitsize-1))%unitsize ==0 :
         print(count)
         
 
@@ -334,24 +334,22 @@ while (video.isOpened()):
 
         
     
-        depth=ret_depth(frames[0:28],depth_model,device)
+        depths=ret_depth(frames[0:unitsize],depth_model,device)
+        depths=[(depth-torch.mean(depth))/(torch.std(depth)) for depth in depths]
+        
         #depth0=ret_depth(frames[0:18],depth_model,device)
         
         #depth1=ret_depth(frames[18:38],depth_model,device)
         frames=[]
         #depth=torch.cat((depth0,depth1))
-        mean_=torch.mean(depth)
-        std_=torch.std(depth)
-        print("mean is ",mean_)
-        print("std is ",std_)
-        depth=(depth-mean_)/std_
+        
         # kaslai chaiyeko xa liyera jaao hai id haru
 
-        print(depth.size())
+        print(depths.size())
         for each_elem in (bucket):
             print("for id ",each_elem["id"])
             tracks=each_elem["tracks"]
-            for i in range(count-27,count+1):
+            for i in range(count-(unitsize-1),count+1):
                 if i in range(each_elem["startIdx"],each_elem["endIdx"]+1):
                     print("         for index ",i)
                     left_,top_,right_,bottom_=tracks[i-each_elem["startIdx"]]
@@ -361,8 +359,8 @@ while (video.isOpened()):
                     right_=round(right_/width_ratio)
                     bottom_=round(bottom_/height_ratio)
                     print("              after normallizing ",(left_,top_,right_,bottom_))
-                    print("              depth size ",depth.size())
-                    cropped_depth=depth[i%38,:,top_:bottom_,left_:right_]
+                    print("              depth size ",depths.size())
+                    cropped_depth=depths[i%unitsize,:,top_:bottom_,left_:right_]
                     print("              cropped depth size ",cropped_depth.size())
                     flat_depth=torch.flatten(cropped_depth).detach().cpu().numpy()
                     print("               after flattening ",len(flat_depth)," type ",type(flat_depth))

@@ -235,7 +235,7 @@ for frameIdx,frame in enumerate(tracks):
 
     for loc,each_id_in_bucket in enumerate(id_in_bucket):
         if each_id_in_bucket not in id_in_frame and bucket[loc]["endIdx"] is None:
-            bucket[loc]["tracks"].append([])
+            bucket[loc]["tracks"].append(())
             
     
     for loc,each_elem in enumerate(bucket):
@@ -261,27 +261,29 @@ for frameIdx,frame in enumerate(tracks):
 
 
 # # delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
-
+print("removing empty arrays")
 for loc,each_elem in enumerate(bucket):
     if each_elem["tracks"][-1]==[]:
-        print("one with empty array at last",each_elem["tracks"])
-    print("removing empty arrays ",loc)
-    lastfill=each_elem["lastFill"]
+        
     
-    each_elem["tracks"]=each_elem["tracks"][:lastfill-each_elem["startIdx"]+1]
-   
-    
-    track_length=len(each_elem["tracks"])
-    print(each_elem["tracks"])
-    
-    lastfill=track_length-track_length%38 # remove greater than divisible by 38
-    
-    
-    
-    each_elem["tracks"]=each_elem["tracks"][:lastfill]
-    each_elem["endIdx"]=each_elem["startIdx"]+lastfill-1
-    if len(each_elem["tracks"])==0:
-        bucket.pop(loc)
+        lastfill=each_elem["lastFill"]
+        print("the original lastfill is",lastfill)
+        print("trying to keep from start to lastfill ,length before ",len(each_elem["tracks"]))
+        each_elem["tracks"]=each_elem["tracks"][:lastfill-each_elem["startIdx"]+1]
+        print("after ",len(each_elem["tracks"]))
+        
+        track_length=len(each_elem["tracks"])
+        
+        
+        lastfill=track_length-track_length%38 # remove greater than divisible by 38
+        
+        
+        print("removing greater than 38")
+        each_elem["tracks"]=each_elem["tracks"][:lastfill]
+        print("now length has reduced to ",len(each_elem["tracks"]))
+        each_elem["endIdx"]=each_elem["startIdx"]+lastfill-1
+        if len(each_elem["tracks"])==0:
+            bucket.pop(loc)
 
 
 

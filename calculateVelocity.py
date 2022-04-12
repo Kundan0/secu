@@ -290,7 +290,7 @@ for loc,each_elem in enumerate(bucket):
 
 
 for each_elem in bucket:
-    print(len(each_elem))
+    print(len(each_elem["tracks"]))
 
 
 

@@ -253,7 +253,8 @@ for frameIdx,frame in enumerate(tracks):
             else:
                 each_elem["endIdx"]=frameIdx-cut
 
-
+        if each_elem["endIdx"] is not None and len(each_elem["tracks"])<38:
+            bucket.pop(loc)
         
     print(bucket)
 

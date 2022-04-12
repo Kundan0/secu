@@ -290,7 +290,9 @@ for loc,each_elem in enumerate(bucket):
 
 
 
-print("final ",bucket)
+for each_elem in bucket:
+    print(len(each_elem))
+
 
 
                 

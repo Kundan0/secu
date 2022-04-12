@@ -263,13 +263,16 @@ for frameIdx,frame in enumerate(tracks):
 # # delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
 
 for loc,each_elem in enumerate(bucket):
+    if each_elem["tracks"][-1]==[]:
+        print("one with empty array at last",each_elem["tracks"])
+    print("removing empty arrays ",loc)
     lastfill=each_elem["lastFill"]
     
     each_elem["tracks"]=each_elem["tracks"][:lastfill-each_elem["startIdx"]+1]
    
     
     track_length=len(each_elem["tracks"])
-    
+    print(each_elem["tracks"])
     
     lastfill=track_length-track_length%38 # remove greater than divisible by 38
     

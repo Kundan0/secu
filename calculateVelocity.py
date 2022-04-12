@@ -191,13 +191,15 @@ for frameIdx,frame in enumerate(tracks):
                   model=lr.fit(X_values,bottom_values)
                   b=list(model.predict(x0))
                   print('before adding ',bucket[location])
+                  print("length of l",len(l))
                   for i in range(len(l)):
                         bucket[location]["tracks"][lastFill-starti+i+1]=[round(l[i]),round(t[i]),round(r[i]),round(b[i])]
                   print('after adding ',bucket[location])
 
             else:
               bucket[location]["tracks"].append([left,top,right,bottom])
-              bucket[location]["lastFill"]=frameIdx
+            
+            bucket[location]["lastFill"]=frameIdx
               #bucket[location]["endIdx"]+=frameIdx
     
            
@@ -207,12 +209,7 @@ for frameIdx,frame in enumerate(tracks):
             print("not found") # if not found, id may have been changed for the same vehicle , so checking the distance 
             
             center=(left+right)/2,(top+bottom)/2
-            for y in bucket:
-                try:
-                    print("error lyaune index",y["tracks"][y["lastFill"]-y["startIdx"]-1])
-
-                except:
-                    print("id",y["id"],"len",len(y["tracks"]))
+            print("last tracks ",[y["tracks"][y["lastFill"]-y["startIdx"]-1] for y in bucket])
             last_track_center=[((left_+right_)/2,(top_+bottom_)/2) for left_,top_,right_,bottom_ in [y["tracks"][y["lastFill"]-y["startIdx"]-1] for y in bucket]]
             mat=match(center,last_track_center)
             if mat is not None: # finds a match having sq-distance less than limit
@@ -241,7 +238,7 @@ for frameIdx,frame in enumerate(tracks):
     
     for loc,each_elem in enumerate(bucket):
         cut=30
-        if each_elem["tracks"][-cut:]==[[] for _ in range(cut)]: # if last fifteen tracks are empty
+        if each_elem["tracks"][-cut:]==[[] for _ in range(cut)]: # if last cut number of frames tracks are empty
             print('last fifteen empty')
             iid=each_elem["id"]
             print("previous id ",iid)
@@ -251,13 +248,13 @@ for frameIdx,frame in enumerate(tracks):
             each_elem["tracks"]=each_elem["tracks"][:-cut] # delete those 
             ending=each_elem["endIdx"]
             if ending is not None:
-                each_elem["endIdx"]=ending-cut # change endIdx to 15 idx before 
+                each_elem["endIdx"]=ending-cut # change endIdx to -cut  idx before 
             else:
                 each_elem["endIdx"]=frameIdx-cut
 
 
         
-
+    print(bucket)
 
 
 # # delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
@@ -279,6 +276,7 @@ for loc,each_elem in enumerate(bucket):
     each_elem["endIdx"]=each_elem["startIdx"]+lastfill-1
     if len(each_elem["tracks"])==0:
         bucket.pop(loc)
+
 
 
 print("final ",bucket)
@@ -318,7 +316,7 @@ while (video.isOpened()):
         depth1=ret_depth(frames[18:38],depth_model,device)
         depth=torch.cat((depth0,depth1))
 
-        depth=(depth-torch.mean(depth))/(torch.std(depth)).detach().cpu()
+        depth=(depth-torch.mean(depth))/(torch.std(depth))
         # kaslai chaiyeko xa liyera jaao hai id haru
 
 
@@ -333,7 +331,7 @@ while (video.isOpened()):
                     right_=round(right_/width_ratio)
                     bottom_=round(bottom_/height_ratio)
                     cropped_depth=depth[i%38][top_:bottom_,left_:right_]
-                    flat_depth=torch.flatten(cropped_depth).numpy()
+                    flat_depth=torch.flatten(cropped_depth).detach().cpu().numpy()
                     avg=np.nanmean(flat_depth).item()
                     std=np.std(flat_depth).item()
                     filtered=[x for x in flat_depth if x>avg-std and x < avg+std]

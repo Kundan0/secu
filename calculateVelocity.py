@@ -286,25 +286,16 @@ for loc,each_elem in enumerate(bucket):
     
 
 
-print("before deleting 0 len",bucket)
-zerocount=0
-for loc,each_elem in enumerate(bucket):
-    if len(each_elem["tracks"])==0:
-        zerocount+=1
-print("total number of 0 len ",zerocount)
-for loc,each_elem in enumerate(bucket):
+
+for each_elem in enumerate(bucket):
     print("before and after removing 0 len ")
     print(len(bucket))
     if len(each_elem["tracks"])==0:
-        print(bucket.pop(loc))
+        bucket.remove(each_elem)
     print(len(bucket))
+
 print("after deleting 0 len ",bucket)
-zerocount=0
-for loc,each_elem in enumerate(bucket):
-    if len(each_elem["tracks"])==0:
-        zerocount+=1
-print("total number of 0 len after  ",zerocount)
-                
+
 
 
 

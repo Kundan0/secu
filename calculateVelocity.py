@@ -310,7 +310,7 @@ while (video.isOpened()):
     ret,frame=video.read()
     if not ret:
         print("Couldn't read video ")
-        sys.exit()
+        break
     frames.append(frame)
     count+=1
     if count%37 ==0 and count!=0:
@@ -330,7 +330,7 @@ while (video.isOpened()):
         depth=(depth-torch.mean(depth))/(torch.std(depth))
         # kaslai chaiyeko xa liyera jaao hai id haru
 
-
+        print(depth.size())
         for each_elem in (bucket):
             tracks=each_elem["tracks"]
             for i in range(count-37,count+1):

@@ -124,7 +124,7 @@ bucket=[{"tracks":[tracks[0][x][2]],"id":tracks[0][x][1],"startIdx":0,"endIdx":N
 # print("length of tracks",len(tracks))
 # print("bucket",bucket)   
 for frameIdx,frame in enumerate(tracks):
-    #print("frameIdx outside",frameIdx)
+    print("frameIdx outside",frameIdx)
     if frameIdx ==0 :
         continue
     for vehicle in frame:
@@ -149,7 +149,7 @@ for frameIdx,frame in enumerate(tracks):
             #diff_index=starti+len_buct-lastFill-1
             diff_index=len_buct-(lastFill-starti)-1
             #print(len_buct,lastFill,starti,diff_index,frameIdx)
-            
+            print("diff index ",diff_index)
             if diff_index!=0: #holes present
                 print("regressing for holes") 
                 if lastFill-starti<6: # if no elements to linearly regress , start from new
@@ -196,13 +196,10 @@ for frameIdx,frame in enumerate(tracks):
                         bucket[location]["tracks"][lastFill-starti+i+1]=[round(l[i]),round(t[i]),round(r[i]),round(b[i])]
                   print('after adding ',bucket[location])
 
-            
             bucket[location]["tracks"].append((left,top,right,bottom))
-            
             bucket[location]["lastFill"]=frameIdx
-              #bucket[location]["endIdx"]+=frameIdx
-    
-           
+            
+              
 
 
         else:

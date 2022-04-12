@@ -131,6 +131,7 @@ for frameIdx,frame in enumerate(tracks):
         
         id_got=vehicle[1]
         print("for vehicle id ",id_got)
+        print("vehilces position ",vehicle[1])
         left,top,right,bottom=vehicle[2]
         location=None
         for elem_idx,each_elem in enumerate(bucket):
@@ -195,13 +196,13 @@ for frameIdx,frame in enumerate(tracks):
                   print('before adding ',bucket[location])
                   #print("length of l",len(l))
                   for i in range(len(l)):
-                        bucket[location]["tracks"][lastFill-starti+i+1]=[round(l[i]),round(t[i]),round(r[i]),round(b[i])]
+                        bucket[location]["tracks"][lastFill-starti+i+1]=(round(l[i]),round(t[i]),round(r[i]),round(b[i]))
                   print('after adding ',bucket[location])
 
-                  bucket[location]["tracks"].append((left,top,right,bottom))
+                  bucket[location]["tracks"].append(vehicle[1])
                   bucket[location]["lastFill"]=frameIdx
             else:
-                bucket[location]["tracks"].append((left,top,right,bottom))
+                bucket[location]["tracks"].append(vehicle[1])
                 bucket[location]["lastFill"]=frameIdx
               
 

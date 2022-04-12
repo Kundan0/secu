@@ -272,18 +272,18 @@ for loc,each_elem in enumerate(bucket):
         each_elem["tracks"]=each_elem["tracks"][:lastfill-each_elem["startIdx"]+1]
         print("after ",len(each_elem["tracks"]))
         
-        track_length=len(each_elem["tracks"])
-        
-        
-        lastfill=track_length-track_length%38 # remove greater than divisible by 38
-        
-        
-        print("removing greater than 38")
-        each_elem["tracks"]=each_elem["tracks"][:lastfill]
-        print("now length has reduced to ",len(each_elem["tracks"]))
-        each_elem["endIdx"]=each_elem["startIdx"]+lastfill-1
-        if len(each_elem["tracks"])==0:
-            bucket.pop(loc)
+    track_length=len(each_elem["tracks"])
+    
+    
+    lastfill=track_length-track_length%38 # remove greater than divisible by 38
+    
+    
+    print("removing greater than 38")
+    each_elem["tracks"]=each_elem["tracks"][:lastfill]
+    print("now length has reduced to ",len(each_elem["tracks"]))
+    each_elem["endIdx"]=each_elem["startIdx"]+lastfill-1
+    if len(each_elem["tracks"])==0:
+        bucket.pop(loc)
 
 
 

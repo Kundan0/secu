@@ -324,7 +324,7 @@ while (video.isOpened()):
         break
     frames.append(frame)
     count+=1
-    if count%37 ==0 and count!=0:
+    if (count-37)%38 ==0 :
         print(count)
         
 
@@ -334,9 +334,12 @@ while (video.isOpened()):
 
         
     
-        depth0=ret_depth(frames[0:18],depth_model,device)
-        depth1=ret_depth(frames[18:38],depth_model,device)
-        depth=torch.cat((depth0,depth1))
+        depth=ret_depth(frames[0:38],depth_model,device)
+        #depth0=ret_depth(frames[0:18],depth_model,device)
+        
+        #depth1=ret_depth(frames[18:38],depth_model,device)
+        frames=[]
+        #depth=torch.cat((depth0,depth1))
         mean_=torch.mean(depth)
         std_=torch.std(depth)
         print("mean is ",mean_)

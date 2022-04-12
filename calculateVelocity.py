@@ -124,7 +124,7 @@ bucket=[{"tracks":[tracks[0][x][2]],"id":tracks[0][x][1],"startIdx":0,"endIdx":N
 # print("length of tracks",len(tracks))
 # print("bucket",bucket)   
 for frameIdx,frame in enumerate(tracks):
-    print("frameIdx outside",frameIdx)
+    #print("frameIdx outside",frameIdx)
     if frameIdx ==0 :
         continue
     for vehicle in frame:
@@ -148,7 +148,7 @@ for frameIdx,frame in enumerate(tracks):
             len_buct=len(buc_loc["tracks"])
             #diff_index=starti+len_buct-lastFill-1
             diff_index=len_buct-(lastFill-starti)-1
-            print(len_buct,lastFill,starti,diff_index,frameIdx)
+            #print(len_buct,lastFill,starti,diff_index,frameIdx)
             
             if diff_index!=0: #holes present
                 print("regressing for holes") 
@@ -191,13 +191,13 @@ for frameIdx,frame in enumerate(tracks):
                   model=lr.fit(X_values,bottom_values)
                   b=list(model.predict(x0))
                   print('before adding ',bucket[location])
-                  print("length of l",len(l))
+                  #print("length of l",len(l))
                   for i in range(len(l)):
                         bucket[location]["tracks"][lastFill-starti+i+1]=[round(l[i]),round(t[i]),round(r[i]),round(b[i])]
                   print('after adding ',bucket[location])
 
-            else:
-              bucket[location]["tracks"].append([left,top,right,bottom])
+            
+            bucket[location]["tracks"].append([left,top,right,bottom])
             
             bucket[location]["lastFill"]=frameIdx
               #bucket[location]["endIdx"]+=frameIdx
@@ -223,13 +223,13 @@ for frameIdx,frame in enumerate(tracks):
                 #bucket[location]["endIdx"]+=1
     
             else: # if couldn't found , that's a new vehicle 
-                print("frameIdx inside,",frameIdx)
+                print(" New vehicle found ,frameIdx inside,",frameIdx)
                 bucket.append({"tracks":[vehicle[2]],"id":vehicle[1],"startIdx":frameIdx,"endIdx":None,"lastFill":frameIdx,"depths":[],"velocity":[]})
                 
     id_in_bucket=[x["id"] for x in bucket]
-    #print(id_in_bucket)
+    print(id_in_bucket)
     id_in_frame=[vehicle[1] for vehicle in frame]
-    #print(id_in_frame)
+    print(id_in_frame)
 
     for loc,each_id_in_bucket in enumerate(id_in_bucket):
         if each_id_in_bucket not in id_in_frame and bucket[loc]["endIdx"] is None:

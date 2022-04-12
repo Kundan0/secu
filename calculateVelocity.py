@@ -287,13 +287,22 @@ for loc,each_elem in enumerate(bucket):
 
 print("before deleting ",bucket)
 
-for each_elem in bucket:
-    print("before and after removing 0 len ")
-    print(len(bucket))
-    if len(each_elem["tracks"])==0:
-        bucket.remove(each_elem)
-    print(len(bucket))
+def remove_empty():
+    empty_count=0
+    loc=0
+    for l,each_elem in enumerate(bucket):
+        if len(each_elem["tracks"])==0:
+            loc=l
+            empty_count+=1
+        else:
+            continue
+        if empty_count:
+            bucket.pop(loc)
+            remove_empty()
+        else:
+            return 
 
+remove_empty()
 print("after deleting 0 len ",bucket)
 
 

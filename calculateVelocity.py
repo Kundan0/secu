@@ -347,7 +347,7 @@ while (video.isOpened()):
                     right_=round(right_/width_ratio)
                     bottom_=round(bottom_/height_ratio)
                     print("              after normallizing ",(left_,top_,right_,bottom_))
-                    cropped_depth=depth[i%38][:][top_:bottom_,left_:right_]
+                    cropped_depth=depth[i%38,:,top_:bottom_,left_:right_]
                     print("              cropped depth size ",cropped_depth.size())
                     flat_depth=torch.flatten(cropped_depth).detach().cpu().numpy()
                     print("               after flattening ",len(flat_depth)," type ",type(flat_depth))

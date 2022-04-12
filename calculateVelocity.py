@@ -263,7 +263,7 @@ for frameIdx,frame in enumerate(tracks):
 # # delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
 print("removing empty arrays")
 for loc,each_elem in enumerate(bucket):
-    if each_elem["tracks"][-1]==[]:
+    if each_elem["tracks"][-1]==():
         
     
         lastfill=each_elem["lastFill"]

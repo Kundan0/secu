@@ -240,7 +240,7 @@ for frameIdx,frame in enumerate(tracks):
     
     for loc,each_elem in enumerate(bucket):
         cut=30
-        if each_elem["tracks"][-cut:]==[[] for _ in range(cut)]: # if last cut number of frames tracks are empty
+        if each_elem["tracks"][-cut:]==[() for _ in range(cut)]: # if last cut number of frames tracks are empty
             print('last fifteen empty')
             iid=each_elem["id"]
             print("previous id ",iid)

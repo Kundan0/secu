@@ -286,14 +286,14 @@ for loc,each_elem in enumerate(bucket):
     
 
 
-
+print("before deleting 0 len",bucket)
 for loc,each_elem in enumerate(bucket):
     print("before and after removing 0 len ")
     print(len(bucket))
     if len(each_elem["tracks"])==0:
         bucket.pop(loc)
     print(len(bucket))
-
+print("after deleting 0 len ",bucket)
 
 
                 
@@ -363,7 +363,7 @@ while (video.isOpened()):
                     #avg=[x for x in filtered if x < avg+std]
                     print("                 nan mean of avg ",np.nanmean(avg))
                     each_elem["depths"].append(np.nanmean(avg))
-print(bucket)   
+print("with depth",bucket)   
 for loc,each_elem in enumerate(bucket):
     print("loc ",loc)
     print("tracklength",len(each_elem["tracks"]))

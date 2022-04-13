@@ -373,7 +373,7 @@ while (video.isOpened()):
                     #avg=[x for x in filtered if x < avg+std]
                     #print("                 nan mean of avg ",np.nanmean(avg))
                     if each_elem["id"]==7:
-                        print("adding depth for frame index ",count," for ")
+                        print("adding depth for frame index ",i," for ")
                     each_elem["depths"].append(np.nanmean(avg))
 for each_elem in bucket:
     if len(each_elem["depths"])!=len(each_elem["tracks"]):
@@ -384,9 +384,23 @@ for each_elem in bucket:
 
 print("with depth",bucket)   
 for loc,each_elem in enumerate(bucket):
+    length_of_track=len(each_elem["tracks"])
+    length_of_depth=len(each_elem["depths"])
     print("loc ",loc)
-    print("tracklength",len(each_elem["tracks"]))
-    print("depths length",len(each_elem["depths"]))
+    print("tracklength",length_of_track)
+    print("depths length",length_of_depth)
+    if (length_of_depth<length_of_track):
+        final_length=int(length_of_depth/38)*38
+        each_elem["depths"]=each_elem["depths"][:final_length]
+        each_elem["tracks"]=each_elem["tracks"][:final_length]
+    # elif (length_of_depth>length_of_track):
+    #     final_length=int(length_of_track/38)*38
+    #     each_elem["depths"]=each_elem["depths"][:final_length]
+    #     each_elem["tracks"]=each_elem["tracks"][:final_length]
+        
+
+
+
 
 # calculate velocity
 

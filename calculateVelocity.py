@@ -419,7 +419,7 @@ while (video.isOpened()):
         if frame_count>=start and frame_count<=end:
             left,top,right,bottom=each_elem["tracks"][frame_count-start]
             velx=each_elem["velocity"][int((frame_count-start)/38)][0]
-            vely=each_elem["velocity"][int((frame_count-count)/38)][1]
+            vely=each_elem["velocity"][int((frame_count-start)/38)][1]
             cv2.rectangle(frame,(left,top),(right,bottom),RECT_COLOR_BBOX,thickness=5)
             cv2.putText(frame,"V({},{})".format(round(velx,2),round(vely,2)),(left,top-10),font,fontScale,TEXT_COLOR,thickness,cv2.LINE_AA)
     frame_count+=1

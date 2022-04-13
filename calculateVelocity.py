@@ -393,6 +393,7 @@ for loc,each_elem in enumerate(bucket):
         final_length=int(length_of_depth/38)*38
         each_elem["depths"]=each_elem["depths"][:final_length]
         each_elem["tracks"]=each_elem["tracks"][:final_length]
+        each_elem["endIdx"]=each_elem["startIdx"]+lastfill-1
     # elif (length_of_depth>length_of_track):
     #     final_length=int(length_of_track/38)*38
     #     each_elem["depths"]=each_elem["depths"][:final_length]

@@ -34,6 +34,7 @@ deepsort = DeepSort(deep_sort_model,
                     max_age=cfg.DEEPSORT.MAX_AGE, n_init=cfg.DEEPSORT.N_INIT, nn_budget=cfg.DEEPSORT.NN_BUDGET,
                     )
 
+camera_speed=45
 
 #load yolov5 tracker
 yolo_model = DetectMultiBackend("yolov5m.pt", device=device, dnn=False)
@@ -401,8 +402,8 @@ for each_item in bucket:
 print("vel bucket",bucket)
 frame_count=0
 font = cv2.FONT_HERSHEY_SIMPLEX
-fontScale = 1
-thickness = 2
+fontScale = 0.5
+thickness = 1
 
 video.set(cv2.CAP_PROP_POS_FRAMES,2) # read from third frames
 
@@ -421,7 +422,7 @@ while (video.isOpened()):
             velx=each_elem["velocity"][int((frame_count-start)/38)][0]
             vely=each_elem["velocity"][int((frame_count-start)/38)][1]
             cv2.rectangle(frame,(left,top),(right,bottom),RECT_COLOR_BBOX,thickness=5)
-            cv2.putText(frame,"V({},{})".format(round(velx,2),round(vely,2)),(left,top-10),font,fontScale,TEXT_COLOR,thickness,cv2.LINE_AA)
+            cv2.putText(frame,"V({},{})".format(round(velx+45,2),round(vely,2)),(left,top-10),font,fontScale,TEXT_COLOR,thickness,cv2.LINE_AA)
     frame_count+=1
     video_writer.write(frame)
 

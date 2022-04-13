@@ -211,23 +211,23 @@ for frameIdx,frame in enumerate(tracks):
         else:
             #print("not found") # if not found, id may have been changed for the same vehicle , so checking the distance 
             
-            center=(left+right)/2,(top+bottom)/2
-            #print("last tracks ",[y["tracks"][y["lastFill"]-y["startIdx"]-1] for y in bucket])
-            last_track_center=[((left_+right_)/2,(top_+bottom_)/2) for left_,top_,right_,bottom_ in [y["tracks"][y["lastFill"]-y["startIdx"]-1] for y in bucket]]
-            mat=match(center,last_track_center)
-            if mat is not None: # finds a match having sq-distance less than limit
-                id_=bucket[mat]["id"]
-                for elem_idx,each_elem in enumerate(bucket):
-                    if each_elem["id"]==id_:
-                        location=elem_idx
-                        break
-                bucket[location]["tracks"].append(vehicle[2])
-                bucket[location]["lastFill"]=frameIdx
-                #bucket[location]["endIdx"]+=1
+            # center=(left+right)/2,(top+bottom)/2
+            # #print("last tracks ",[y["tracks"][y["lastFill"]-y["startIdx"]-1] for y in bucket])
+            # last_track_center=[((left_+right_)/2,(top_+bottom_)/2) for left_,top_,right_,bottom_ in [y["tracks"][y["lastFill"]-y["startIdx"]-1] for y in bucket]]
+            # mat=match(center,last_track_center)
+            # if mat is not None: # finds a match having sq-distance less than limit
+            #     id_=bucket[mat]["id"]
+            #     for elem_idx,each_elem in enumerate(bucket):
+            #         if each_elem["id"]==id_:
+            #             location=elem_idx
+            #             break
+            #     bucket[location]["tracks"].append(vehicle[2])
+            #     bucket[location]["lastFill"]=frameIdx
+            #     #bucket[location]["endIdx"]+=1
     
-            else: # if couldn't found , that's a new vehicle 
-                #print(" New vehicle found ,frameIdx inside,",frameIdx)
-                bucket.append({"tracks":[vehicle[2]],"id":vehicle[1],"startIdx":frameIdx,"endIdx":None,"lastFill":frameIdx,"depths":[],"velocity":[]})
+            # else: # if couldn't found , that's a new vehicle 
+            #     #print(" New vehicle found ,frameIdx inside,",frameIdx)
+            bucket.append({"tracks":[vehicle[2]],"id":vehicle[1],"startIdx":frameIdx,"endIdx":None,"lastFill":frameIdx,"depths":[],"velocity":[]})
                 
     id_in_bucket=[x["id"] for x in bucket]
    # print(id_in_bucket)
@@ -350,29 +350,29 @@ while (video.isOpened()):
             
             for i in range(count-(unitsize-1),count+1):
                 if i in range(each_elem["startIdx"],each_elem["endIdx"]+1):
-                    print("         for index ",i)
+                    #print("         for index ",i)
                     left_,top_,right_,bottom_=tracks[i-each_elem["startIdx"]]
-                    print("             track got ",(left_,top_,right_,bottom_))
+                    #print("             track got ",(left_,top_,right_,bottom_))
                     left_=round(left_/width_ratio)
                     top_=round(top_/height_ratio)
                     right_=round(right_/width_ratio)
                     bottom_=round(bottom_/height_ratio)
-                    print("              after normallizing ",(left_,top_,right_,bottom_))
-                    print("              depth size ",depths.size())
+                    #print("              after normallizing ",(left_,top_,right_,bottom_))
+                    #print("              depth size ",depths.size())
                     cropped_depth=depths[i%unitsize,:,top_:bottom_,left_:right_]
-                    print("              cropped depth size ",cropped_depth.size())
+                    #print("              cropped depth size ",cropped_depth.size())
                     flat_depth=torch.flatten(cropped_depth).detach().cpu().numpy()
-                    print("               after flattening ",len(flat_depth)," type ",type(flat_depth))
+                    #print("               after flattening ",len(flat_depth)," type ",type(flat_depth))
                     avg=np.nanmean(flat_depth).item()
-                    print("               average calculate ",avg)
+                    #print("               average calculate ",avg)
                     std=np.std(flat_depth).item()
                     filtered=[x for x in flat_depth if x>avg-std and x < avg+std]
-                    print("                filtered ",len(filtered))
+                    #print("                filtered ",len(filtered))
                     #avg=[x for x in filtered if x < avg+std]
-                    print("                 nan mean of avg ",np.nanmean(avg))
+                    #print("                 nan mean of avg ",np.nanmean(avg))
                     each_elem["depths"].append(np.nanmean(avg))
 for each_elem in bucket:
-    if len(each_elem["depths"])==0:
+    if len(each_elem["depths"])!=len(each_elem["tracks"]):
         print("Alert error depth count ")
         print(each_elem["id"]," has ",len(each_elem["depths"])," start at ",each_elem["startIdx"]," end at ", each_elem["endIdx"])
         

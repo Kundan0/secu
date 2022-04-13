@@ -40,7 +40,7 @@ yolo_model = DetectMultiBackend("yolov5m.pt", device=device, dnn=False)
 
 #velocity_model
 
-model1=myModel('./model.pt',device)
+model1=myModel('./model.zip',device).to(device)
 model1.load_model()
 
 
@@ -395,31 +395,35 @@ for each_item in bucket:
         depth=torch.tensor(depths[i],dtype=torch.float32,device=device)
         
         with torch.no_grad():
-            output=model1(track,depth)
-            velx,vely,posx,posy=output
-            each_item["velocity"].append((velx,vely))
+            output=model1(track.unsqueeze(0),depth.unsqueeze(0))
+            velx,vely,posx,posy=output.squeeze(0)
+            each_item["velocity"].append((velx.item(),vely.item()))
 print("vel bucket",bucket)
-# frame_count=0
+frame_count=0
+font = cv2.FONT_HERSHEY_SIMPLEX
+fontScale = 1
+thickness = 2
 
-# video.set(cv2.CAP_PROP_POS_FRAMES,2) # read from third frames
+video.set(cv2.CAP_PROP_POS_FRAMES,2) # read from third frames
 
-# while (video.isOpened()):
+while (video.isOpened()):
 
-#     ret,frame=video.read()
-#     if not ret:
-#         print("Couldn't read video ")
-#         sys.exit()
-#     for each_elem in bucket:
-#         start=each_elem["startIdx"]
-#         end=each_elem["endIdx"]
+    ret,frame=video.read()
+    if not ret:
+        print("Couldn't read video ")
+        sys.exit()
+    for each_elem in bucket:
+        start=each_elem["startIdx"]
+        end=each_elem["endIdx"]
         
-#         if frame_count>=start and frame_count<=end:
-#             left,top,right,bottom=each_elem["tracks"][frame_count-start]
-#             velx=each_elem["velocity"][int(frame_count/38)][0]
-#             vely=each_elem["velocity"][int(frame_count/38)][1]
-#             cv2.rectangle(frame,(left,top),(right,bottom),RECT_COLOR_BBOX,thickness=5)
-#             cv2.putText(frame,"V({},{})".format(round(velx,2),vely))
-#     video_writer.write(frame)
+        if frame_count>=start and frame_count<=end:
+            left,top,right,bottom=each_elem["tracks"][frame_count-start]
+            velx=each_elem["velocity"][int((frame_count-start)/38)][0]
+            vely=each_elem["velocity"][int((frame_count-count)/38)][1]
+            cv2.rectangle(frame,(left,top),(right,bottom),RECT_COLOR_BBOX,thickness=5)
+            cv2.putText(frame,"V({},{})".format(round(velx,2),round(vely,2)),(left,top-10),font,fontScale,TEXT_COLOR,thickness,cv2.LINE_AA)
+    frame_count+=1
+    video_writer.write(frame)
 
             
 

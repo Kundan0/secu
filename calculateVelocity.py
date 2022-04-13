@@ -385,7 +385,7 @@ for each_item in bucket:
     tracks=[tracks[38*i:(i+1)*38] for i in range(lengthOfDataset)]
     depths=[depths[38*i:(i+1)*38] for i in range(lengthOfDataset)]
     #dataset=[(tracks[i],depths[i]) for i in range(lengthOfDataset)]
-    for i in range(lengthOfDataset):
+    for i in range(lengthOfDataset-1,-1,-1):
         track=torch.tensor(tracks[i],dtype=torch.float32,device=device)
         permutted_track=track.permute(1,0)
         permutted_track[0]=permutted_track[0]/frame_width

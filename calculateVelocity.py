@@ -40,8 +40,8 @@ yolo_model = DetectMultiBackend("yolov5m.pt", device=device, dnn=False)
 
 #velocity_model
 
-# model1=myModel('./model.pt',device)
-# model1.load_model()
+model1=myModel('./model.pt',device)
+model1.load_model()
 
 
 
@@ -110,8 +110,8 @@ def Calcloss(center1,center2):
 # # how can we deal with these two problems
 # #possible solution
 # # for each frame , if the previous identified vehicle is not found, we push an empty track for all those ids.
-# # if last 5 tracks are empty, we stop pushing the track, that marks the end of existence of that vehicle in the video
-# # but if the previous identified vehicle is found in other succesive frames after being missed in some frames :count <5 .
+# # if last some tracks are empty, we stop pushing the track, that marks the end of existence of that vehicle in the video
+# # but if the previous identified vehicle is found in other succesive frames after being missed in some frames :count < some value .
 
 # # we fill the hole . (hole is the empty track that was pushed.)
 # # how to fill hole ?
@@ -285,7 +285,7 @@ for loc,each_elem in enumerate(bucket):
     each_elem["endIdx"]=each_elem["startIdx"]+lastfill-1
     
 
-print("before deleting ",bucket)
+#print("before deleting ",bucket)
 
 def remove_empty():
     empty_count=0
@@ -303,7 +303,7 @@ def remove_empty():
             return 
 
 remove_empty()
-print("after deleting 0 len ",bucket)
+#print("after deleting 0 len ",bucket)
 
 
 
@@ -337,11 +337,8 @@ while (video.isOpened()):
         depths=ret_depth(frames[0:unitsize],depth_model,device)
         for i in range(len(depths)):
             depths[i]=(depths[i]-torch.mean(depths[i]))/torch.std(depths[i])
-        #depth0=ret_depth(frames[0:18],depth_model,device)
         
-        #depth1=ret_depth(frames[18:38],depth_model,device)
         frames=[]
-        #depth=torch.cat((depth0,depth1))
         
         # kaslai chaiyeko xa liyera jaao hai id haru
 
@@ -380,30 +377,34 @@ for loc,each_elem in enumerate(bucket):
 
 # calculate velocity
 
-# for each_item in bucket:
-#     tracks=each_item["tracks"]
-#     depths=each_item["depths"]
-#     lengthOfDataset=int(len(tracks)/38)
-#     tracks=[tracks[38*i:(i+1)*38] for i in range(lengthOfDataset)]
-#     depths=[depths[38*i:(i+1)*38] for i in range(lengthOfDataset)]
-#     #dataset=[(tracks[i],depths[i]) for i in range(lengthOfDataset)]
-#     for i in range(lengthOfDataset):
-#         track=torch.tensor(tracks[i],dtype=torch.float32,device=device)
-#         permutted_track=track.permute(1,0)
-#         permutted_track[0]=permutted_track[0]/frame_width
-#         permutted_track[2]=permutted_track[2]/frame_width
-#         permutted_track[1]=permutted_track[1]/frame_height
-#         permutted_track[3]=permutted_track[3]/frame_height
-#         track=permutted_track.permute(1,0)
-#         depth=torch.tensor(depths[i],dtype=torch.float32,device=device)
+for each_item in bucket:
+    tracks=each_item["tracks"]
+    depths=each_item["depths"]
+    lengthOfDataset=int(len(tracks)/38)
+    tracks=[tracks[38*i:(i+1)*38] for i in range(lengthOfDataset)]
+    depths=[depths[38*i:(i+1)*38] for i in range(lengthOfDataset)]
+    #dataset=[(tracks[i],depths[i]) for i in range(lengthOfDataset)]
+    for i in range(lengthOfDataset):
+        track=torch.tensor(tracks[i],dtype=torch.float32,device=device)
+        permutted_track=track.permute(1,0)
+        permutted_track[0]=permutted_track[0]/frame_width
+        permutted_track[2]=permutted_track[2]/frame_width
+        permutted_track[1]=permutted_track[1]/frame_height
+        permutted_track[3]=permutted_track[3]/frame_height
+        track=permutted_track.permute(1,0)
+        depth=torch.tensor(depths[i],dtype=torch.float32,device=device)
         
-#         with torch.no_grad():
-#             output=model1(track,depth)
-#             velx,vely,posx,posy=output
-#             each_item["velocity"].append((velx,vely))
+        with torch.no_grad():
+            output=model1(track,depth)
+            velx,vely,posx,posy=output
+            each_item["velocity"].append((velx,vely))
+print("vel bucket",bucket)
 # frame_count=0
+
+# video.set(cv2.CAP_PROP_POS_FRAMES,2) # read from third frames
+
 # while (video.isOpened()):
-#     video.set(2,2)
+
 #     ret,frame=video.read()
 #     if not ret:
 #         print("Couldn't read video ")

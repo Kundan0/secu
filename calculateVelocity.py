@@ -318,15 +318,17 @@ unitsize=20
 video.set(cv2.CAP_PROP_POS_FRAMES,2) # read from third frames
     
 while (video.isOpened()):
-    print("count ",count)
+    
     ret,frame=video.read()
     if not ret:
         print("Couldn't read video ")
         break
-    frames.append(frame)
     count+=1
-    if (count-(unitsize-1))%unitsize ==0 :
-        print(count)
+    frames.append(frame)
+    
+    print("count ",count)
+    if (count+1)%unitsize ==0 :
+        
         
 
     

@@ -262,7 +262,7 @@ for frameIdx,frame in enumerate(tracks):
 
 
 # # delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
-print("removing empty arrays")
+#print("removing empty arrays")
 for loc,each_elem in enumerate(bucket):
     lastfill=each_elem["lastFill"]
     # print("the original lastfill is",lastfill)
@@ -347,7 +347,7 @@ while (video.isOpened()):
 
         print(depths.size())
         for each_elem in (bucket):
-            print("for id ",each_elem["id"])
+            #print("for id ",each_elem["id"])
             tracks=each_elem["tracks"]
             
             for i in range(count-(unitsize-1),count+1):
@@ -372,6 +372,8 @@ while (video.isOpened()):
                     #print("                filtered ",len(filtered))
                     #avg=[x for x in filtered if x < avg+std]
                     #print("                 nan mean of avg ",np.nanmean(avg))
+                    if each_elem["id"]==7:
+                        print("adding depth for frame index ",count," for ")
                     each_elem["depths"].append(np.nanmean(avg))
 for each_elem in bucket:
     if len(each_elem["depths"])!=len(each_elem["tracks"]):

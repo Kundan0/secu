@@ -258,7 +258,7 @@ for frameIdx,frame in enumerate(tracks):
         if each_elem["endIdx"] is not None and len(each_elem["tracks"])<38:
             bucket.pop(loc)
         
-    #print(bucket)
+    
 
 
 # # delete all the empty arrays that couldn't be deleted as only 5 arrays could be deleted at once 
@@ -347,6 +347,7 @@ while (video.isOpened()):
         for each_elem in (bucket):
             print("for id ",each_elem["id"])
             tracks=each_elem["tracks"]
+            
             for i in range(count-(unitsize-1),count+1):
                 if i in range(each_elem["startIdx"],each_elem["endIdx"]+1):
                     print("         for index ",i)
@@ -370,6 +371,13 @@ while (video.isOpened()):
                     #avg=[x for x in filtered if x < avg+std]
                     print("                 nan mean of avg ",np.nanmean(avg))
                     each_elem["depths"].append(np.nanmean(avg))
+for each_elem in bucket:
+    if len(each_elem["depths"])==0:
+        print("Alert error depth count ")
+        print(each_elem["id"]," has ",len(each_elem["depths"])," start at ",each_elem["startIdx"]," end at ", each_elem["endIdx"])
+        
+
+
 print("with depth",bucket)   
 for loc,each_elem in enumerate(bucket):
     print("loc ",loc)

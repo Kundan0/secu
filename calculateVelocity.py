@@ -48,7 +48,7 @@ model1.load_model()
 
 #video_info
 #video 
-file_path='./download.mp4'
+file_path='./WR.mp4'
 output_file_name='./output.avi'
 video=cv2.VideoCapture(file_path)
 frame_width = int(video.get(3))

@@ -48,7 +48,7 @@ model1.load_model()
 
 #video_info
 #video 
-file_path='./challenge.mp4'
+file_path='./WR.mp4'
 output_file_name='./output.avi'
 video=cv2.VideoCapture(file_path)
 frame_width = int(video.get(3))
@@ -438,7 +438,7 @@ for each_item in bucket:
         depth_end=list(model.predict(np.array([0,37]).reshape(-1,1)))
         delta_depth=(depth_end[1]-depth_end[0])
         avg_depth=(depth_end[1]+depth_end[0])
-        vel_x=delta_depth*FPS*avg_depth
+        vel_x=delta_depth*FPS
         #vel_y=((tracks[i][0][0]-tracks[i][37][0])+(tracks[i][0][2]-tracks[i][37][2]))*FPS/2560
         each_item["velocity"].append([vel_x,vely.item()])
 print("vel bucket",bucket[0]["velocity"])

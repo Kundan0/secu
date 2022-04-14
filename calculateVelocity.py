@@ -326,7 +326,7 @@ while (video.isOpened()):
     count+=1
     frames.append(frame)
     
-    print("count ",count)
+    #print("count ",count)
     if (count+1)%unitsize ==0 :
         
         
@@ -372,8 +372,7 @@ while (video.isOpened()):
                     #print("                filtered ",len(filtered))
                     #avg=[x for x in filtered if x < avg+std]
                     #print("                 nan mean of avg ",np.nanmean(avg))
-                    if each_elem["id"]==7:
-                        print("adding depth for frame index ",i," for ")
+                    
                     each_elem["depths"].append(np.nanmean(avg))
 # for each_elem in bucket:
 #     if len(each_elem["depths"])!=len(each_elem["tracks"]):

@@ -440,12 +440,12 @@ for each_item in bucket:
         avg_depth=(depth_end[1]+depth_end[0])
         vel_x=delta_depth*FPS*avg_depth
         #vel_y=((tracks[i][0][0]-tracks[i][37][0])+(tracks[i][0][2]-tracks[i][37][2]))*FPS/2560
-        each_item["velocity"].append([vel_x,vely])
+        each_item["velocity"].append([vel_x,vely.item()])
 print("vel bucket",bucket[0]["velocity"])
 for each_elem in bucket:
     #old_vel=[each_elem["velocity"][i][0] for i in range(len(each_elem["velocity"]))]
     for i in range(len(each_elem["velocity"])):
-        each_elem["velocity"][i][0]=sum([each_elem["velocity"][y][0] for y in range(i)])/(i+1)
+        each_elem["velocity"][i][0]=sum([each_elem["velocity"][y][0] for y in range(i+1)])/(i+1)
 
 
 print("vel bucket",bucket[0]["velocity"])

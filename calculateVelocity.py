@@ -375,10 +375,10 @@ while (video.isOpened()):
                     if each_elem["id"]==7:
                         print("adding depth for frame index ",i," for ")
                     each_elem["depths"].append(np.nanmean(avg))
-for each_elem in bucket:
-    if len(each_elem["depths"])!=len(each_elem["tracks"]):
-        print("Alert error depth count ")
-        print(each_elem["id"]," has ",len(each_elem["depths"])," start at ",each_elem["startIdx"]," end at ", each_elem["endIdx"])
+# for each_elem in bucket:
+#     if len(each_elem["depths"])!=len(each_elem["tracks"]):
+#         print("Alert error depth count ")
+#         print(each_elem["id"]," has ",len(each_elem["depths"])," start at ",each_elem["startIdx"]," end at ", each_elem["endIdx"])
         
 
 
@@ -399,7 +399,12 @@ for loc,each_elem in enumerate(bucket):
     #     each_elem["depths"]=each_elem["depths"][:final_length]
     #     each_elem["tracks"]=each_elem["tracks"][:final_length]
         
-
+for loc,each_elem in enumerate(bucket):
+    length_of_track=len(each_elem["tracks"])
+    length_of_depth=len(each_elem["depths"])
+    print("loc ",loc)
+    print("tracklength",length_of_track)
+    print("depths length",length_of_depth)
 
 
 
@@ -430,7 +435,7 @@ print("vel bucket",bucket)
 frame_count=0
 font = cv2.FONT_HERSHEY_SIMPLEX
 fontScale = 0.5
-thickness = 1
+thickness = 0.7
 
 video.set(cv2.CAP_PROP_POS_FRAMES,2) # read from third frames
 
@@ -448,8 +453,12 @@ while (video.isOpened()):
             left,top,right,bottom=each_elem["tracks"][frame_count-start]
             velx=each_elem["velocity"][int((frame_count-start)/38)][0]
             vely=each_elem["velocity"][int((frame_count-start)/38)][1]
+            if velx>0:
+                RECT_COLOR_BBOX=(0,255,0)
+            else:
+                RECT_COLOR_BBOX=(0,0,255)
             cv2.rectangle(frame,(left,top),(right,bottom),RECT_COLOR_BBOX,thickness=2)
-            cv2.putText(frame,"V({},{})".format(round(velx,2),round(vely,2)),(left,top-10),font,fontScale,TEXT_COLOR,thickness,cv2.LINE_AA)
+            cv2.putText(frame,"V({},{})".format(round(velx,2),round(vely,2)),(left,top-15),font,fontScale,TEXT_COLOR,thickness,cv2.LINE_AA)
     frame_count+=1
     video_writer.write(frame)
 

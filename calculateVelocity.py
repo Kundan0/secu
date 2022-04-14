@@ -417,20 +417,20 @@ for each_item in bucket:
     depths=[depths[38*i:(i+1)*38] for i in range(lengthOfDataset)]
     #dataset=[(tracks[i],depths[i]) for i in range(lengthOfDataset)]
     for i in range(lengthOfDataset):
-        # track=torch.tensor(tracks[i],dtype=torch.float32,device=device)
-        # permutted_track=track.permute(1,0)
-        # permutted_track[0]=permutted_track[0]/frame_width
-        # permutted_track[2]=permutted_track[2]/frame_width
-        # permutted_track[1]=permutted_track[1]/frame_height
-        # permutted_track[3]=permutted_track[3]/frame_height
-        # track=permutted_track.permute(1,0)
-        # depth=torch.tensor(depths[i],dtype=torch.float32,device=device)
+        track=torch.tensor(tracks[i],dtype=torch.float32,device=device)
+        permutted_track=track.permute(1,0)
+        permutted_track[0]=permutted_track[0]/frame_width
+        permutted_track[2]=permutted_track[2]/frame_width
+        permutted_track[1]=permutted_track[1]/frame_height
+        permutted_track[3]=permutted_track[3]/frame_height
+        track=permutted_track.permute(1,0)
+        depth=torch.tensor(depths[i],dtype=torch.float32,device=device)
         
-        # with torch.no_grad():
-        #     output=model1(track.unsqueeze(0),depth.unsqueeze(0))
+        with torch.no_grad():
+            output=model1(track.unsqueeze(0),depth.unsqueeze(0))
             
-        #     velx,vely,posx,posy=output.squeeze(0)
-        #     each_item["velocity"].append((velx.item(),vely.item()))
+            velx,vely,posx,posy=output.squeeze(0)
+            #each_item["velocity"].append((velx.item(),vely.item()))
         x=np.arange(38).reshape(-1,1)
         depth_bucket=np.array(depths[i])
         lr=LinearRegression()
@@ -439,11 +439,16 @@ for each_item in bucket:
         delta_depth=(depth_end[1]-depth_end[0])
         avg_depth=(depth_end[1]+depth_end[0])
         vel_x=delta_depth*FPS*avg_depth
-        vel_y=((tracks[i][0][0]-tracks[i][37][0])+(tracks[i][0][2]-tracks[i][37][2]))*FPS/2560
-        each_item["velocity"].append((vel_x,vel_y))
+        #vel_y=((tracks[i][0][0]-tracks[i][37][0])+(tracks[i][0][2]-tracks[i][37][2]))*FPS/2560
+        each_item["velocity"].append([vel_x,vely])
+print("vel bucket",bucket[0]["velocity"])
+for each_elem in bucket:
+    #old_vel=[each_elem["velocity"][i][0] for i in range(len(each_elem["velocity"]))]
+    for i in range(len(each_elem["velocity"])):
+        each_elem["velocity"][i][0]=sum([each_elem["velocity"][y][0] for y in range(i)])/(i+1)
 
 
-print("vel bucket",bucket)
+print("vel bucket",bucket[0]["velocity"])
 frame_count=0
 font = cv2.FONT_HERSHEY_SIMPLEX
 fontScale = 0.5

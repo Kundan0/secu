@@ -435,7 +435,7 @@ print("vel bucket",bucket)
 frame_count=0
 font = cv2.FONT_HERSHEY_SIMPLEX
 fontScale = 0.5
-thickness = 0.7
+thickness = 1
 
 video.set(cv2.CAP_PROP_POS_FRAMES,2) # read from third frames
 

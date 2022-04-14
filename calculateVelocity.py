@@ -438,7 +438,9 @@ for each_item in bucket:
         depth_end=list(model.predict(np.array([0,37]).reshape(-1,1)))
         delta_depth=(depth_end[1]-depth_end[0])
         avg_depth=(depth_end[1]+depth_end[0])
-        vel_x=delta_depth*FPS
+        vel_x=delta_depth*FPS/2
+        print("delta depth, ",delta_depth)
+        print("velocity x, ",vel_x)
         #vel_y=((tracks[i][0][0]-tracks[i][37][0])+(tracks[i][0][2]-tracks[i][37][2]))*FPS/2560
         each_item["velocity"].append([vel_x,vely.item()])
 print("vel bucket",bucket[0]["velocity"])

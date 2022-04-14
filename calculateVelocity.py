@@ -416,20 +416,33 @@ for each_item in bucket:
     tracks=[tracks[38*i:(i+1)*38] for i in range(lengthOfDataset)]
     depths=[depths[38*i:(i+1)*38] for i in range(lengthOfDataset)]
     #dataset=[(tracks[i],depths[i]) for i in range(lengthOfDataset)]
-    for i in range(lengthOfDataset-1,-1,-1):
-        track=torch.tensor(tracks[i],dtype=torch.float32,device=device)
-        permutted_track=track.permute(1,0)
-        permutted_track[0]=permutted_track[0]/frame_width
-        permutted_track[2]=permutted_track[2]/frame_width
-        permutted_track[1]=permutted_track[1]/frame_height
-        permutted_track[3]=permutted_track[3]/frame_height
-        track=permutted_track.permute(1,0)
-        depth=torch.tensor(depths[i],dtype=torch.float32,device=device)
+    for i in range(lengthOfDataset):
+        # track=torch.tensor(tracks[i],dtype=torch.float32,device=device)
+        # permutted_track=track.permute(1,0)
+        # permutted_track[0]=permutted_track[0]/frame_width
+        # permutted_track[2]=permutted_track[2]/frame_width
+        # permutted_track[1]=permutted_track[1]/frame_height
+        # permutted_track[3]=permutted_track[3]/frame_height
+        # track=permutted_track.permute(1,0)
+        # depth=torch.tensor(depths[i],dtype=torch.float32,device=device)
         
-        with torch.no_grad():
-            output=model1(track.unsqueeze(0),depth.unsqueeze(0))
-            velx,vely,posx,posy=output.squeeze(0)
-            each_item["velocity"].append((velx.item(),vely.item()))
+        # with torch.no_grad():
+        #     output=model1(track.unsqueeze(0),depth.unsqueeze(0))
+            
+        #     velx,vely,posx,posy=output.squeeze(0)
+        #     each_item["velocity"].append((velx.item(),vely.item()))
+        x=np.arange(38).reshape(-1,1)
+        depth_bucket=np.array(depths[i])
+        lr=LinearRegression()
+        model=lr.fit(x,depth_bucket)
+        depth_end=model.predict(np.array([0,37]))
+        delta_depth=(depth_end[1]-depth_end[0])
+        avg_depth=(depth_end[1]+depth_end[0])
+        vel_x=delta_depth*FPS*avg_depth
+        vel_y=((tracks[i][0][0]-tracks[i][37][0])+(tracks[i][0][2]-tracks[i][37][2]))*FPS/2560
+        each_item["velocity"].append((vel_x,vel_y))
+
+
 print("vel bucket",bucket)
 frame_count=0
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -457,7 +470,7 @@ while (video.isOpened()):
             else:
                 RECT_COLOR_BBOX=(0,0,255)
             cv2.rectangle(frame,(left,top),(right,bottom),RECT_COLOR_BBOX,thickness=2)
-            cv2.putText(frame,"V({},{})".format(round(velx,2),round(vely,2)),(left,top-15),font,fontScale,TEXT_COLOR,thickness,cv2.LINE_AA)
+            cv2.putText(frame,"V ({},{})".format(round(velx,2),round(vely,2)),(left,top-15),font,fontScale,TEXT_COLOR,thickness,cv2.LINE_AA)
     frame_count+=1
     video_writer.write(frame)
 

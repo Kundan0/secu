@@ -443,14 +443,14 @@ for each_item in bucket:
         print("velocity x, ",vel_x)
         #vel_y=((tracks[i][0][0]-tracks[i][37][0])+(tracks[i][0][2]-tracks[i][37][2]))*FPS/2560
         each_item["velocity"].append([vel_x,vely.item()])
-print("vel bucket",bucket[0]["velocity"])
+
 for each_elem in bucket:
     #old_vel=[each_elem["velocity"][i][0] for i in range(len(each_elem["velocity"]))]
     for i in range(len(each_elem["velocity"])):
         each_elem["velocity"][i][0]=sum([each_elem["velocity"][y][0] for y in range(i+1)])/(i+1)
+print("vel bucket",bucket)
 
 
-print("vel bucket",bucket[0]["velocity"])
 frame_count=0
 font = cv2.FONT_HERSHEY_SIMPLEX
 fontScale = 0.5

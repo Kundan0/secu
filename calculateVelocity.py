@@ -48,7 +48,7 @@ model1.load_model()
 
 #video_info
 #video 
-file_path='./WR.mp4'
+file_path='./challenge.mp4'
 output_file_name='./output.avi'
 video=cv2.VideoCapture(file_path)
 frame_width = int(video.get(3))
@@ -435,7 +435,7 @@ for each_item in bucket:
         depth_bucket=np.array(depths[i])
         lr=LinearRegression()
         model=lr.fit(x,depth_bucket)
-        depth_end=model.predict(np.array([0,37]))
+        depth_end=list(model.predict(np.array([0,37]).reshape(-1,1)))
         delta_depth=(depth_end[1]-depth_end[0])
         avg_depth=(depth_end[1]+depth_end[0])
         vel_x=delta_depth*FPS*avg_depth
